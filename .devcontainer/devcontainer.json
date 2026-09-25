@@ -4,55 +4,27 @@
     "dockerfile": "Dockerfile",
     "context": ".."
   },
-  "runArgs": [
-    "--privileged",
-    "--sysctl", "net.ipv4.ip_forward=1",
-    "--sysctl", "net.bridge.bridge-nf-call-iptables=0"
-  ],
-  "forwardPorts": [
-    3080,
-    2222,
-    5000,
-    5001,
-    5002,
-    5003,
-    5004,
-    5005,
-    5006,
-    5007,
-    5008,
-    5009,
-    5010
-  ],
-  "portsAttributes": {
-    "3080": {
-      "label": "GNS3 Server Web UI & API",
-      "onAutoForward": "openBrowserOnce"
-    },
-    "2222": {
-      "label": "OpenSSH Server Daemon",
-      "onAutoForward": "silent"
-    },
-    "5000-5010": {
-      "label": "GNS3 Telnet Node Consoles",
-      "onAutoForward": "silent"
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
     }
   },
-  "customizations": {
-    "codespaces": {
-      "openFiles": [
-        "README.md"
-      ]
-    },
-    "vscode": {
-      "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash"
-      },
-      "extensions": [
-        "ms-vscode.azure-account",
-        "ms-python.python"
-      ]
-    }
+  "runArgs": [
+    "--privileged",
+    "--cap-add=NET_ADMIN",
+    "--cap-add=SYS_ADMIN",
+    "--device=/dev/net/tun"
+  ],
+  "forwardPorts": [
+    3080, 2222,
+    5000, 5001, 5002, 5003, 5004, 5005
+  ],
+  "portsAttributes": {
+    "3080": { "label": "GNS3 Server Web UI & API", "onAutoForward": "openBrowserOnce" },
+    "2222": { "label": "OpenSSH Server Daemon", "onAutoForward": "silent" },
+    "5000-5005": { "label": "GNS3 Telnet Node Consoles", "onAutoForward": "silent" }
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "postStartCommand": "bash .devcontainer/start-daemon.sh",
