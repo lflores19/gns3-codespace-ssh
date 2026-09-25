@@ -1,0 +1,21 @@
+# Referencias (fuentes primarias oficiales) — consulta: 2026-09-25
+- GNS3 Server (GitHub) — https://github.com/GNS3/gns3-server
+- GNS3 REST API 2.2 — https://api.gns3.net/en/2.2/
+- GNS3 Docker support — https://docs.gns3.com/docs/emulators/docker-support-in-gns3/
+- Docker Engine — https://docs.docker.com/engine/
+- Dev Containers spec — https://containers.dev/implementors/json_reference/
+- GitHub Codespaces — https://docs.github.com/en/codespaces
+- gh codespace ports forward — https://cli.github.com/manual/gh_codespace_ports_forward
+- Open vSwitch VLAN FAQ — https://docs.openvswitch.org/en/latest/faq/vlan/
+- Open vSwitch userspace — https://docs.openvswitch.org/en/stable/intro/install/userspace/
+- Ryu SDN Framework — https://github.com/faucetsdn/ryu
+- OpenDaylight — https://docs.opendaylight.org/
+- ONOS — https://opennetworking.org/onos/
+- Kea DHCP — https://kea.readthedocs.io/
+- BIND9 — https://bind9.readthedocs.io/
+- PostgreSQL — https://www.postgresql.org/docs/
+- Samba — https://www.samba.org/samba/docs/
+- OpenVPN community — https://openvpn.net/community-docs/
+- Suricata — https://docs.suricata.io/
+- Prometheus — https://prometheus.io/docs/
+- Grafana — https://grafana.com/docs/

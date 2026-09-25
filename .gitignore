@@ -1,4 +1,5 @@
+.env
+*.pcap
 *.log
-*.pid
 __pycache__/
-.vscode/
+.gns3_backup/

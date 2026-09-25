@@ -1,0 +1,23 @@
+services:
+  web1:
+    build: docker/web
+    networks: [dmz]
+    container_name: lab-web1
+  db1:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS:-changeme}
+      POSTGRES_DB: inventario
+    volumes: [dbdata:/var/lib/postgresql/data]
+    networks: [dmz]
+    container_name: lab-db1
+  app1:
+    build: docker/app
+    depends_on: [db1]
+    networks: [dmz]
+    container_name: lab-app1
+networks:
+  dmz:
+    driver: bridge
+    ipam: { config: [{ subnet: 172.16.0.0/24, gateway: 172.16.0.1 }] }
+volumes: { dbdata: {} }

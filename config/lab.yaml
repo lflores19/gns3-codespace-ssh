@@ -1,0 +1,128 @@
+# =============================================================
+# lab.yaml — Fuente única de verdad del laboratorio (network lab)
+# Versión del documento: 1.0  |  GNS3 Server: 2.2.55
+# =============================================================
+meta:
+  project_name: utp-network-lab
+  gns3_server: "http://127.0.0.1:3080/v2"
+  phase: diagnostico
+  created_by: ec2-user + Copilot-assisted
+  date: "2026-09-25"
+
+# ---------- Direccionamiento por VLAN ----------
+vlans:
+  - id: 10
+    name: ventas
+    subnet: 192.168.10.0/24
+    gateway: 192.168.10.1
+    dhcp_pool: [192.168.10.100, 192.168.10.159]
+    description: Departamento de Ventas (acceso restringido HTTPS a DMZ)
+  - id: 20
+    name: administracion
+    subnet: 192.168.20.0/24
+    gateway: 192.168.20.1
+    dhcp_pool: [192.168.20.100, 192.168.20.159]
+    description: Departamento de Administración (acceso amplio)
+  - id: 40
+    name: invitados
+    subnet: 192.168.40.0/24
+    gateway: 192.168.40.1
+    dhcp_pool: [192.168.40.100, 192.168.40.159]
+    description: Invitados — aislada de LAN y gestión
+  - id: 99
+    name: gestion
+    subnet: 192.168.99.0/24
+    gateway: 192.168.99.1
+    dhcp_pool: null
+    description: VLAN de gestión — solo administradores
+  - id: 200
+    name: dmz
+    subnet: 172.16.0.0/24
+    gateway: 172.16.0.1
+    dhcp_pool: null
+    description: Servidores web/app/db/docker nodes
+  - id: 300
+    name: wan
+    subnet: 10.20.30.0/24
+    gateway: 10.20.30.1
+    dhcp_pool: null
+    description: Segmento WAN simulado — origen de clientes VPN
+
+# ---------- Nodos del laboratorio (contenedores Docker gestionados) ----------
+nodes:
+  - name: dhcp1
+    role: dhcp
+    network: dmz
+    image: lab-dhcp:kea-2.4
+    ip: 172.16.0.11
+  - name: dns1
+    role: dns
+    network: dmz
+    image: lab-dns:bind9
+    ip: 172.16.0.12
+  - name: web1
+    role: web
+    network: dmz
+    image: lab-web:nginx
+    ip: 172.16.0.20
+  - name: app1
+    role: app
+    network: dmz
+    image: lab-app:flask
+    ip: 172.16.0.21
+  - name: db1
+    role: db
+    network: dmz
+    image: lab-db:postgres-16
+    ip: 172.16.0.22
+  - name: smb1
+    role: files
+    network: dmz
+    image: lab-smb:samba-4
+    ip: 172.16.0.24
+  - name: vpn1
+    role: vpn
+    network: wan
+    image: lab-vpn:openvpn
+    ip: 10.20.30.10
+  - name: suricata1
+    role: ids
+    network: dmz
+    image: lab-ids:suricata-7
+    ip: 172.16.0.30
+  - name: grafana1
+    role: monitoring
+    network: dmz
+    image: lab-mon:grafana-prometheus
+    ip: 172.16.0.40
+
+# ---------- SDN ----------
+sdn:
+  controller: ryu           # selección justificada en docs/informe.md §6
+  of_version: "1.3"
+  switches: [ovs-sw1, ovs-sw2]
+  policy_sdn02:
+    name: bloqueo-https-ventas
+    match:
+      dl_vlan: 10
+      nw_proto: tcp
+      tp_dst: 443
+    action: drop
+    reversible: true
+
+# ---------- Firewall / matriz de acceso ----------
+firewall:
+  node: gns3-router-or-docker-fw
+  default_policy: drop
+  rules:
+    - { id: FW01, src: ventas,          dst: dmz-web,  service: [80, 443],  action: accept }
+    - { id: FW02, src: administracion,  dst: dmz,      service: [80,443,5432,445,22], action: accept }
+    - { id: FW03, src: invitados,       dst: dmz-web,  service: [80,443],  action: accept }
+    - { id: FW04, src: invitados,       dst: lan,      service: any,       action: drop }
+    - { id: FW05, src: vpn-tun,         dst: dmz-app,  service: [5000],    action: accept }
+    - { id: FW06, src: any,             dst: gestion,  service: any,       action: drop, except: administracion }
+
+# ---------- Matriz de requisitos (fuente: docs/matriz-requisitos.csv) ----------
+requirements_file: docs/matriz-requisitos.csv
+env:
+  gh_token_hint: usar-variable-entorno-nunca-hardcodear
