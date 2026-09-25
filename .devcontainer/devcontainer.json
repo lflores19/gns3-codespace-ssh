@@ -12,7 +12,12 @@
     5002,
     5003,
     5004,
-    5005
+    5005,
+    5006,
+    5007,
+    5008,
+    5009,
+    5010
   ],
   "portsAttributes": {
     "3080": {
@@ -23,7 +28,7 @@
       "label": "OpenSSH Server Daemon",
       "onAutoForward": "silent"
     },
-    "5000-5005": {
+    "5000-5010": {
       "label": "GNS3 Telnet Node Consoles",
       "onAutoForward": "silent"
     }
