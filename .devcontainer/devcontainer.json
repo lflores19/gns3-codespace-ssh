@@ -1,26 +1,13 @@
 {
   "name": "GNS3 Server SSH Space",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
-  },
+  "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "version": "latest",
-      "moby": true,
-      "dockerDashComposeVersion": "v2"
+      "moby": true
     }
   },
-  "runArgs": [
-    "--privileged",
-    "--cap-add=NET_ADMIN",
-    "--cap-add=SYS_ADMIN",
-    "--device=/dev/net/tun"
-  ],
-  "forwardPorts": [
-    3080, 2222,
-    5000, 5001, 5002, 5003, 5004, 5005
-  ],
+  "forwardPorts": [3080, 2222, 5000, 5001, 5002, 5003, 5004, 5005],
   "portsAttributes": {
     "3080": { "label": "GNS3 Server Web UI & API", "onAutoForward": "openBrowserOnce" },
     "2222": { "label": "OpenSSH Server Daemon", "onAutoForward": "silent" },
