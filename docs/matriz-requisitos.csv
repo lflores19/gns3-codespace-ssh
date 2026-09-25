@@ -1,23 +1,23 @@
 requirement_id,descripcion,criterio_aceptacion,archivo_evidencia,estado
-ENV02,Nodos Docker arrancan desde reconstrucción de imágenes,log de build y manifest digests,evidence/ENV02-build.log,PENDING
-NET01,DHCP en VLAN10/20/40 y renovación,"IP, máscara, gateway, DNS y lease",evidence/NET01-dhcp.txt,PENDING
-NET02,Trunk 802.1Q transporta VLAN previstas,captura etiquetada en enlace correcto,evidence/NET02-trunk.pcap,PENDING
-NET03,Mismo VLAN entre switches funciona,prueba de aplicación o ping + captura,evidence/NET03-ping.txt,PENDING
-NET04,Invitados no acceden a LAN/gestión,servicio destino sano desde origen permitido y fallo desde invitado,evidence/NET04-acl.txt,PENDING
-DNS01,Resolución directa/inversa y TCP/UDP53,consultas reales y respuestas,evidence/DNS01-dig.txt,PENDING
-APP01,Alta/lectura de inventario y persistencia,"petición, registro DB y lectura tras restart",evidence/APP01-crud.txt,PENDING
-DB01,DB accesible solo desde aplicación,prueba positiva y negativa autenticadas,evidence/DB01-isolation.txt,PENDING
-SMB01,Permisos por grupo,archivo permitido y acceso denegado a usuario incorrecto,evidence/SMB01-acl.txt,PENDING
-SDN01,Dos switches conectados al controlador,"datapath IDs y OpenFlow1.3",evidence/SDN01-of.txt,PENDING
-SDN02,Bloqueo/restauración HTTPS de Ventas vía controlador,"regla/cookie, contadores y pruebas antes/después",evidence/SDN02-policy.txt,PENDING
-SDN03,Pérdida y recuperación del controlador,comportamiento observado con timeouts documentados,evidence/SDN03-timeout.txt,PENDING
-SEC01,Matriz firewall y bypass IPv6,pruebas por origen/destino y contadores,evidence/SEC01-fw.txt,PENDING
-VPN01,VPN desde segmento WAN,"handshake, IP, rutas y acceso permitido/denegado",evidence/VPN01-wan.txt,PENDING
-VPN02,VPN desde Windows,evidencia real; pendiente si no se ejecutó,evidence/VPN02-win.txt,PENDING
-IDS01,Tráfico autorizado de prueba detectado,"mirror, captura y alerta EVE con SID",evidence/IDS01-eve.json,PENDING
-MON01,Dashboard alimentado por métricas reales,captura con hora y consultas de respaldo,evidence/MON01-dash.png,PENDING
-MON02,Caída web y alerta y recuperación,tiempos de disparo/resolución,evidence/MON02-alert.txt,PENDING
-OPS01,Reinicio de nodos sin perder configuración/datos,comparación antes/después,evidence/OPS01-restart.txt,PENDING
-OPS02,Restart/rebuild del entorno con restore probado,respaldo y restauración verificables,evidence/OPS02-restore.log,PENDING
-OPS03,Consola interactiva de nodo por túnel,host/puerto y sesión funcional,evidence/OPS03-console.txt,PENDING
-PERF01,30 minutos de funcionamiento del laboratorio,"CPU/RAM/disco, pérdida/latencia locales",evidence/PERF01-perf.txt,PENDING
+ENV02,Nodos Docker arrancan desde reconstrucción de imágenes,log de build y manifest digests,evidence/ENV02-build.log,NOT_EVALUATED
+NET01,DHCP en VLAN10/20/40 y renovación,"IP, máscara, gateway, DNS y lease",evidence/NET01-dhcp.txt,NOT_EVALUATED
+NET02,Trunk 802.1Q transporta VLAN previstas,captura etiquetada en enlace correcto,evidence/NET02-trunk.pcap,NOT_EVALUATED
+NET03,Mismo VLAN entre switches funciona,prueba de aplicación o ping + captura,evidence/NET03-ping.txt,NOT_EVALUATED
+NET04,Invitados no acceden a LAN/gestión,servicio destino sano desde origen permitido y fallo desde invitado,evidence/NET04-acl.txt,NOT_EVALUATED
+DNS01,Resolución directa/inversa y TCP/UDP53,consultas reales y respuestas,evidence/DNS01-dig.txt,NOT_EVALUATED
+APP01,Alta/lectura de inventario y persistencia,"petición, registro DB y lectura tras restart",evidence/APP01-crud.txt,NOT_EVALUATED
+DB01,DB accesible solo desde aplicación,prueba positiva y negativa autenticadas,evidence/DB01-isolation.txt,NOT_EVALUATED
+SMB01,Permisos por grupo,archivo permitido y acceso denegado a usuario incorrecto,evidence/SMB01-acl.txt,NOT_EVALUATED
+SDN01,Dos switches conectados al controlador,"datapath IDs y OpenFlow1.3",evidence/SDN01-of.txt,NOT_EVALUATED
+SDN02,Bloqueo/restauración HTTPS de Ventas vía controlador,"regla/cookie, contadores y pruebas antes/después",evidence/SDN02-policy.txt,NOT_EVALUATED
+SDN03,Pérdida y recuperación del controlador,comportamiento observado con timeouts documentados,evidence/SDN03-timeout.txt,NOT_EVALUATED
+SEC01,Matriz firewall y bypass IPv6,pruebas por origen/destino y contadores,evidence/SEC01-fw.txt,NOT_EVALUATED
+VPN01,VPN desde segmento WAN,"handshake, IP, rutas y acceso permitido/denegado",evidence/VPN01-wan.txt,NOT_EVALUATED
+VPN02,VPN desde Windows,evidencia real; pendiente si no se ejecutó,evidence/VPN02-win.txt,NOT_EVALUATED
+IDS01,Tráfico autorizado de prueba detectado,"mirror, captura y alerta EVE con SID",evidence/IDS01-eve.json,NOT_EVALUATED
+MON01,Dashboard alimentado por métricas reales,captura con hora y consultas de respaldo,evidence/MON01-dash.png,NOT_EVALUATED
+MON02,Caída web y alerta y recuperación,tiempos de disparo/resolución,evidence/MON02-alert.txt,NOT_EVALUATED
+OPS01,Reinicio de nodos sin perder configuración/datos,comparación antes/después,evidence/OPS01-restart.txt,NOT_EVALUATED
+OPS02,Restart/rebuild del entorno con restore probado,respaldo y restauración verificables,evidence/OPS02-restore.log,NOT_EVALUATED
+OPS03,Consola interactiva de nodo por túnel,host/puerto y sesión funcional,evidence/OPS03-console.txt,NOT_EVALUATED
+PERF01,30 minutos de funcionamiento del laboratorio,"CPU/RAM/disco, pérdida/latencia locales",evidence/PERF01-perf.txt,NOT_EVALUATED
