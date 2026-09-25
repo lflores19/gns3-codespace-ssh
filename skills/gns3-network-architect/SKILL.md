@@ -15,13 +15,17 @@ Use this skill when designing, generating, automating, or configuring network to
 
 Base URL: `http://<gns3-host>:3080/v2`
 
+> **CRITICAL:** QEMU and Dynamips appliances MUST be fetched via `template_id` (from `GET /templates` or `GET /qemu/vms` / `GET /dynamips/vms`) and created via `POST /templates/{template_id}` inside the target project. Direct `POST /nodes` with `qemu|dynamips` will fail without a fully populated server configuration block. VPCS and built-in Ethernet Switches can be created directly via `POST /nodes`.
+
 | Operation | Method & Endpoint | Payload / Parameters |
 | --- | --- | --- |
 | **Check Version** | `GET /version` | None |
 | **List Projects** | `GET /projects` | None |
 | **Create Project** | `POST /projects` | `{"name": "Topology-Name"}` |
 | **Open Project** | `POST /projects/{project_id}/open` | None |
-| **Create Node** | `POST /projects/{project_id}/nodes` | `{"name": "R1", "node_type": "dynamips|vpcs|qemu|ethernet_switch", "compute_id": "local", "x": 0, "y": 0, "properties": {...}}` |
+| **Create Built-in Node** | `POST /projects/{project_id}/nodes` | `{"name": "PC-1", "node_type": "vpcs|ethernet_switch|cloud|nat", "compute_id": "local", "x": 0, "y": 0}` |
+| **Boolean Fetch Templates** | `GET /templates` | None |
+| **Add Template Node** | `POST /projects/{project_id}/templates/{template_id}` | `{"x": 0, "y": 0, "compute_id": "local", "name": "R1"}` |
 | **Create Link** | `POST /projects/{project_id}/links` | `{"nodes": [{"node_id": "...", "adapter_number": 0, "port_number": 0}, {"node_id": "...", "adapter_number": 0, "port_number": 0}]}` |
 | **Start Node** | `POST /projects/{project_id}/nodes/{node_id}/start` | None |
 | **Start All Nodes** | `POST /projects/{project_id}/nodes/start` | None |
@@ -30,62 +34,74 @@ Base URL: `http://<gns3-host>:3080/v2`
 
 ## Automated Topology Creation Script (Python Template)
 
+For robust multi-node architecture, use the official `gns3fy` library (`pip install gns3fy`):
+
 ```python
-import requests
-import json
-import time
+import gns3fy
 
-GNS3_URL = "http://127.0.0.1:3080/v2"
+GNS3_URL = "http://127.0.0.1:3080"
+project_name = "AutoLab-Enterprise"
 
-def create_topology():
-    # 1. Create or load project
-    proj_resp = requests.post(f"{GNS3_URL}/projects", json={"name": "AutoLab-Enterprise"})
-    if proj_resp.status_code == 201:
-        project = proj_resp.json()
-    else:
-        # Get existing
-        projects = requests.get(f"{GNS3_URL}/projects").json()
-        project = next(p for p in projects if p["name"] == "AutoLab-Enterprise")
-        requests.post(f"{GNS3_URL}/projects/{project['project_id']}/open")
-    
-    project_id = project["project_id"]
-    print(f"[+] Active Project: {project['name']} ({project_id})")
+# 1. Connect and Open/Create Project
+server = gns3fy.Gns3Connector(GNS3_URL)
+try:
+    project = gns3fy.Project(name=project_name, connector=server)
+    project.get()
+    project.open()
+except:
+    project = gns3fy.Project(name=project_name)
+    project.create(connector=server)
+    project.get()
 
-    # 2. Add VPCS Nodes
-    pc1 = requests.post(f"{GNS3_URL}/projects/{project_id}/nodes", json={
-        "name": "PC-1", "node_type": "vpcs", "compute_id": "local", "x": -200, "y": 0
-    }).json()
+print(f"[+] Active Project: {project.name} ({project.project_id})")
 
-    pc2 = requests.post(f"{GNS3_URL}/projects/{project_id}/nodes", json={
-        "name": "PC-2", "node_type": "vpcs", "compute_id": "local", "x": 200, "y": 0
-    }).json()
+# 2. Add VPCS Nodes
+pc1 = gns3fy.Node(name="PC-1", node_type="vpcs", compute_id="local", x=-200, y=0, project_id=project.project_id, connector=server)
+pc1.create()
 
-    # 3. Add Switch
-    sw1 = requests.post(f"{GNS3_URL}/projects/{project_id}/nodes", json={
-        "name": "SW-Core", "node_type": "ethernet_switch", "compute_id": "local", "x": 0, "y": 0
-    }).json()
+# 3. Add QEMU / Dynamips Node via Template
+# Get template ID
+server.get_templates()
+template = next(t for t in server.templates if "c7200" in t["name".lower()])
+router1 = gns3fy.Node(
+    name="R1",
+    project_id=project.project_id,
+    connector=server,
+    node_type="dynamips",
+    x=0, y=0
+)
+# Add using template
+router1.create(template_id=template["template_id"])
 
-    # 4. Link PC1 <-> Switch (port 0) and PC2 <-> Switch (port 1)
-    requests.post(f"{GNS3_URL}/projects/{project_id}/links", json={
-        "nodes": [
-            {"node_id": pc1["node_id"], "adapter_number": 0, "port_number": 0},
-            {"node_id": sw1["node_id"], "adapter_number": 0, "port_number": 0}
-        ]
-    })
-    requests.post(f"{GNS3_URL}/projects/{project_id}/links", json={
-        "nodes": [
-            {"node_id": pc2["node_id"], "adapter_number": 0, "port_number": 0},
-            {"node_id": sw1["node_id"], "adapter_number": 0, "port_number": 1}
-        ]
-    })
+# 4. Link PC1 <-> Router1
+link = gns3fy.Link(
+    project_id=project.project_id,
+    connector=server,
+    nodes=[
+        {"node_id": pc1.node_id, "adapter_number": 0, "port_number": 0},
+        {"node_id": router1.node_id, "adapter_number": 0, "port_number": 0}
+    ]
+)
+link.create()
 
-    # 5. Start all nodes
-    requests.post(f"{GNS3_URL}/projects/{project_id}/nodes/start")
-    print("[+] Topology created and started successfully!")
+# 5. Start all nodes
+project.open()
+for node in project.nodes:
+    node.start()
 
-if __name__ == "__main__":
-    create_topology()
+print("[+] Topology created and started successfully!")
 ```
+
+*Alternative Minimal Python (Raw Requests) Template is available in the Reference section below.*
+
+## Architecture Design Standards & Image Provisioning
+
+- **Addressing Standards**:
+  - Loopback: `/32` (e.g., `10.255.255.X/32`) for Router IDs and BGP peering.
+  - Core/P2P Transit Links: `/30` or `/31` (e.g., `10.0.X.Y/30`).
+  - Access LAN: `/24` / `/28` (e.g., `192.168.X.0/24`).
+- **Protocols**: OSPF Area 0 interconnecting ABRs; iBGP Route Reflectors using Loopbacks + IGP re-distribution. Passive interfaces on edge interfaces.
+- **Firmware / Images**: Dynamips requires Cisco IOS `.image` (especially c7200). QEMU requires `.qcow2` or `.img`. IOU requires L2/L3 `.bin`. Use the `gns3-codespace-ops` skill to place them in `/home/vscode/GNS3/images/<category>/` so they appear in Templates.
 
 ## VPCS Automated Configuration via Telnet
 

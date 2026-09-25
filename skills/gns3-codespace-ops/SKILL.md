@@ -48,7 +48,29 @@ Upload images directly into the persistent GNS3 directory:
 ```bash
 # Example: Download Alpine Linux appliance for ultra-lightweight routing/testing
 wget -P /home/vscode/GNS3/images/QEMU/ https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86_64/alpine-virt-3.18.4-x86_64.iso
+
+# Verify downloaded images match expected binary sizes
+ls -lh /home/vscode/GNS3/images/IOS/ /home/vscode/GNS3/images/QEMU/
 ```
+
+## Security Hardening for Public DevContainers
+
+When the Codespace is shared, the URL is public, or `3080` is exposed via Port Forward:
+1. **Enable Web Auth** in `gns3_server.conf` (requires GNS3 WebUI/Server 2.2.43+):
+   ```ini
+   [Server]
+   host = 0.0.0.0
+   port = 3080
+   allow_remote_console = True
+   console_start_port_range = 5000
+   console_end_port_range = 5050
+   
+   # Auth settings
+   user = admin
+   password = secure_hub_password_2026
+   ```
+2. **Restart the daemon**: `pkill -f gns3server; nohup gns3server --config /home/vscode/.config/GNS3/2.2/gns3_server.conf > /tmp/gns3server.log 2>&1 &`
+3. **Remote Clients**: Connect GNS3 GUI to `http://127.0.0.1:3080` using Basic Auth, or bind HTTP to codespace's proxy via `gh codespace ports visibility 3080:private`.
 
 ## Diagnostics & Troubleshooting
 
