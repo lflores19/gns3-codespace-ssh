@@ -1,0 +1,60 @@
+---
+name: gns3-codespace-ops
+description: "Trigger: gns3 codespace, gns3 daemon, gns3 ssh, gns3 remote server, gns3 codespaces ops, gns3 troubleshooting. Manage lifecycle, remote port forwarding, daemon operations, and image/appliance provisioning for GNS3 Server running inside GitHub Codespaces."
+license: Apache-2.0
+metadata:
+  author: gentleman-programming
+  version: "1.0"
+---
+
+## Activation Contract
+
+Use this skill when administering, troubleshooting, port-forwarding, or provisioning appliances for GNS3 Server running in GitHub Codespaces.
+
+## Remote Codespace Connection Matrix
+
+| Need | Command |
+| --- | --- |
+| **Interactive SSH Shell** | `gh codespace ssh -c <codespace-name>` |
+| **Forward GUI & Console Ports** | `gh codespace ports forward 3080:3080 5000:5000 5001:5001 5002:5002 5003:5003 5004:5004 5005:5005 -c <codespace-name>` |
+| **Direct SSH Background Tunnel** | `gh codespace ssh -c <codespace-name> -- -N -L 3080:localhost:3080 -L 5000:localhost:5000 -L 5001:localhost:5001 -L 5002:localhost:5002 -L 5003:localhost:5003` |
+| **Check Codespace Status** | `gh codespace view -c <codespace-name> --json state,idleTimeoutMinutes` |
+
+## GNS3 Daemon Ops & Maintenance
+
+Inside the Codespace (`/home/vscode`):
+
+```bash
+# 1. Check GNS3 Daemon & Logs
+ps aux | grep gns3server
+cat /tmp/gns3server.log
+
+# 2. Restart Server Daemon cleanly
+pkill -f gns3server || true
+nohup gns3server --config /home/vscode/.config/GNS3/2.2/gns3_server.conf > /tmp/gns3server.log 2>&1 &
+
+# 3. Test API Health locally
+curl -s http://127.0.0.1:3080/v2/version
+```
+
+## Provisioning Images & Appliances
+
+Upload images directly into the persistent GNS3 directory:
+
+- **Dynamips Cisco IOS (.image / .bin)**: `/home/vscode/GNS3/images/IOS/`
+- **QEMU (.qcow2 / .img / .iso)**: `/home/vscode/GNS3/images/QEMU/`
+- **GNS3 Appliance templates (.gns3a)**: `/home/vscode/GNS3/appliances/`
+
+```bash
+# Example: Download Alpine Linux appliance for ultra-lightweight routing/testing
+wget -P /home/vscode/GNS3/images/QEMU/ https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86_64/alpine-virt-3.18.4-x86_64.iso
+```
+
+## Diagnostics & Troubleshooting
+
+| Symptom | Cause | Solution |
+| --- | --- | --- |
+| `Permission denied on /usr/bin/ubridge` | Missing Linux capabilities | Run `sudo setcap cap_net_admin,cap_net_raw=ep /usr/bin/ubridge` |
+| `Cannot connect to 127.0.0.1:3080` | Port forward inactive or daemon down | Re-run `gh codespace ports forward` and verify `ps aux \| grep gns3server` |
+| `Console connection refused on port 5000` | Node not started or port outside range | Check `gns3_server.conf` has `allow_remote_console = True` and start the node via API/GUI. |
+| `CPU at 100% on router boot` | Dynamips Idle-PC not calculated | In GNS3 GUI, right-click router -> **Idle-PC** calculation to stabilize CPU usage. |
