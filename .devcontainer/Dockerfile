@@ -1,60 +1,30 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
-ENV DEBIAN_FRONTEND=noninteractive
+LABEL purpose="GNS3 daemon lab with nested Docker + OVS (privileged codespace)"
 
-# Update system and install required system tools, SSH and GNS3 dependencies
+ARG DEBIAN_FRONTEND=noninteractive
+
+# --- Runtime networking + orchestration stack ---
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    software-properties-common \
-    ca-certificates \
-    curl \
-    wget \
-    gnupg \
-    openssh-server \
-    sudo \
-    iproute2 \
-    iptables \
-    net-tools \
-    telnet \
-    tcpdump \
-    bridge-utils \
-    qemu-system-x86 \
-    qemu-utils \
-    python3 \
-    python3-pip \
-    python3-dev \
-    python3-setuptools \
-    gcc \
-    libcap2-bin \
-    git \
-    nano \
-    vim \
-    procps \
-    && add-apt-repository -y ppa:gns3/ppa \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-       dynamips \
-       ubridge \
-       vpcs \
-       gns3-server \
-       || pip3 install --no-cache-dir gns3-server \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    docker.io iptables iproute2 iputils-ping dnsutils \
+    openvswitch-switch tcpdump \
+    python3 python3-pip python3-venv \
+    postgresql-client jq && \
+    pip3 install --no-cache-dir ryu gns3fy pyyaml && \
+    rm -rf /var/lib/apt/lists/*
 
-# Grant network capabilities to ubridge and dynamips
-RUN if [ -f /usr/bin/ubridge ]; then setcap cap_net_admin,cap_net_raw=ep /usr/bin/ubridge; fi && \
-    if [ -f /usr/bin/dynamips ]; then setcap cap_net_admin,cap_net_raw=ep /usr/bin/dynamips; fi
+# vscode user goes to docker group (daemon runs as root via helper script)
+RUN usermod -aG docker vscode && \
+    mkdir -p /home/vscode/GNS3/{images/IOS,images/QEMU,projects,appliances} && \
+    chown -R vscode:vscode /home/vscode/GNS3
 
-# Configure SSH daemon port & permissions for vscode user
-RUN mkdir -p /var/run/sshd && \
-    sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config 2>/dev/null || true && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config 2>/dev/null || true && \
-    echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# GNS3 Server 2.2.x (aligned with desktop GUI 2.2.55)
+RUN pip3 install --no-cache-dir "gns3-server==2.2.55" "gns3-gui==2.2.55" && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    dynamips vpcs ubridge qemu-system-x86 qemu-utils telnet && \
+    rm -rf /var/lib/apt/lists/* && \\
+    setcap 'cap_net_admin,cap_net_raw=ep' /usr/bin/ubridge 2>/dev/null || true
 
-# Create workspace and configuration paths
-RUN mkdir -p /home/vscode/.config/GNS3/2.2 \
-             /home/vscode/GNS3/projects \
-             /home/vscode/GNS3/images/QEMU \
-             /home/vscode/GNS3/images/IOS \
-             /home/vscode/GNS3/appliances && \
-    chown -R vscode:vscode /home/vscode/.config /home/vscode/GNS3
-
-USER vscode
+# Entrypoint helper: start dockerd + ovsdb/vswitchd as root at container start
+COPY start-daemon.sh /usr/local/bin/start-lab-daemon.sh
+RUN chmod +x /usr/local/bin/start-lab-daemon.sh

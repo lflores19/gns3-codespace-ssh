@@ -4,6 +4,11 @@
     "dockerfile": "Dockerfile",
     "context": ".."
   },
+  "runArgs": [
+    "--privileged",
+    "--sysctl", "net.ipv4.ip_forward=1",
+    "--sysctl", "net.bridge.bridge-nf-call-iptables=0"
+  ],
   "forwardPorts": [
     3080,
     2222,
