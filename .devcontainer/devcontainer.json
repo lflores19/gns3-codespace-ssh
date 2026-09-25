@@ -1,0 +1,50 @@
+{
+  "name": "GNS3 Server SSH Space",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "forwardPorts": [
+    3080,
+    2222,
+    5000,
+    5001,
+    5002,
+    5003,
+    5004,
+    5005
+  ],
+  "portsAttributes": {
+    "3080": {
+      "label": "GNS3 Server Web UI & API",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "2222": {
+      "label": "OpenSSH Server Daemon",
+      "onAutoForward": "silent"
+    },
+    "5000-5005": {
+      "label": "GNS3 Telnet Node Consoles",
+      "onAutoForward": "silent"
+    }
+  },
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "README.md"
+      ]
+    },
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "ms-vscode.azure-account",
+        "ms-python.python"
+      ]
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postStartCommand": "bash .devcontainer/start-daemon.sh",
+  "remoteUser": "vscode"
+}
