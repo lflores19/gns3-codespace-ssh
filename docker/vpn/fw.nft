@@ -1,0 +1,32 @@
+#!/usr/sbin/nft -f
+# Matriz de firewall del lab (etapa 5: routing básico; etapa 6: políticas completas).
+# Base tomada y adaptada de la configuración validada en el Codespace (config/firewall/fw.nft).
+
+flush ruleset
+
+table ip filter {
+    chain input {
+        type filter hook input priority 0; policy drop;
+        ct state established,related accept
+        iifname "lo" accept
+        ip protocol icmp accept comment "icmp gestion"
+        counter drop comment "input-drop"
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+        ct state established,related accept
+        ip protocol icmp accept comment "testing etapa5"
+        # TMP etapa5: permitir forwarding inter-VLAN para verificar router-on-a-stick;
+        # la matriz SEC01 completa (FW01-FW06) se aplica en etapa 6 reemplazando
+        # esta cadena con políticas por VLAN.
+        accept comment "allow-all tmp etapa5"
+    }
+}
+
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority 100;
+        # NAT fuera del lab hacia uplink (WAN lo define etapa 6)
+    }
+}

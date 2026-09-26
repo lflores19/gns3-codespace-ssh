@@ -77,27 +77,43 @@ services:
       retries: 6
     restart: unless-stopped
 
+  # firewall router-on-a-stick, gateways 10.10.x.1 por subinterface
+  fw:
+    build: ../../docker/vpn
+    container_name: lab-fw1
+    cap_add: [ NET_ADMIN ]
+    environment:
+      FW_UPLINK: eth1
+      FW_VLANS: "10:10.10.10.1/24 20:10.10.20.1/24 99:10.10.99.1/24"
+    networks:
+      oob: { ipv4_address: 172.29.250.254 }   # gestión
+      backbone: {}                            # eth1: trunk hacia SW1
+    restart: unless-stopped
+
   # clientes de prueba por VLAN — etapa de verificación
   pc10a:
     image: alpine:3.20
     container_name: lab-pc10a
-    command: sh -c 'apk add --no-cache iputils >/dev/null 2>&1 || true; sleep 3600'
+    command: sh -c 'ip route replace default via 10.10.10.1; sleep 3600'
     networks:
       vlan10_sw1: { ipv4_address: 10.10.10.101 }
     cap_add: [ NET_ADMIN ]
+    depends_on: [ fw ]
 
   pc10b:
     image: alpine:3.20
     container_name: lab-pc10b
-    command: sh -c 'apk add --no-cache iputils >/dev/null 2>&1 || true; sleep 3600'
+    command: sh -c 'ip route replace default via 10.10.10.1; sleep 3600'
     networks:
       vlan10_sw2: { ipv4_address: 10.10.10.102 }
     cap_add: [ NET_ADMIN ]
+    depends_on: [ fw ]
 
   pc99:
     image: alpine:3.20
     container_name: lab-pc99
-    command: sh -c 'apk add --no-cache iputils >/dev/null 2>&1 || true; sleep 3600'
+    command: sh -c 'ip route replace default via 10.10.99.1; sleep 3600'
     networks:
       vlan99_sw1: { ipv4_address: 10.10.99.20 }
     cap_add: [ NET_ADMIN ]
+    depends_on: [ fw ]
