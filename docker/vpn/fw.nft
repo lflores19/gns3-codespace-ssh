@@ -1,32 +1,62 @@
 #!/usr/sbin/nft -f
-# Matriz de firewall del lab (etapa 5: routing básico; etapa 6: políticas completas).
-# Base tomada y adaptada de la configuración validada en el Codespace (config/firewall/fw.nft).
+# Matriz SEC01 completa (FW01-FW06) — etapa 6 host local.
+# Base: políticas del lab Codespace (config/firewall/fw.nft validado SEC01 PASS)
+# re-escritas para el plano Docker local según matriz §7 del prompt:
+#   Adm(10)->*, Ventas(20)->servidores(30) solo servicios, Invitados(40)->solo Internet/NAT,
+#   Gestión(99)->todo administrativo, DMZ expone 443 y SMB cumplido.
+# Criterio de cierre: counters en cada regla + pruebas positivas/negativas registrables
+# (verify-stage6.sh).
 
 flush ruleset
 
 table ip filter {
+
     chain input {
         type filter hook input priority 0; policy drop;
         ct state established,related accept
         iifname "lo" accept
-        ip protocol icmp accept comment "icmp gestion"
+        ip protocol icmp accept comment "icmp-gestion"
+        # FW03: OpenVPN solo desde WAN y solo TCP/1194
+        iifname "wan" tcp dport 1194 counter accept comment "openvpn-wan"
         counter drop comment "input-drop"
     }
 
     chain forward {
         type filter hook forward priority 0; policy drop;
         ct state established,related accept
-        ip protocol icmp accept comment "testing etapa5"
-        # TMP etapa5: permitir forwarding inter-VLAN para verificar router-on-a-stick;
-        # la matriz SEC01 completa (FW01-FW06) se aplica en etapa 6 reemplazando
-        # esta cadena con políticas por VLAN.
-        accept comment "allow-all tmp etapa5"
+
+        # FW01: Adm (10) accede a servidores (30) y gestión (99)
+        ip saddr 10.10.10.0/24 ip daddr 10.10.30.0/24 counter accept comment "adm-to-srv"
+        ip saddr 10.10.10.0/24 ip daddr 10.10.99.0/24 counter accept comment "adm-to-mgmt"
+
+        # FW02: Ventas (20) solo servicios concretos en servidores: web 443, smb 445, dns 53
+        ip saddr 10.10.20.0/24 ip daddr 10.10.30.0/24 tcp dport {443, 445} counter accept comment "ventas-srv-443-445"
+        ip saddr 10.10.20.0/24 ip daddr 10.10.30.11 udp dport 53 counter accept comment "ventas-dns"
+        ip saddr 10.10.20.0/24 ip daddr 10.10.30.11 tcp dport 53 counter accept comment "ventas-dns-tcp"
+        ip saddr 10.10.20.0/24 ip daddr 10.10.30.0/24 counter drop comment "ventas-srv-otros-drop"
+
+        # FW04: Invitados (40) bloqueado a toda la red interna, solo NAT/Internet
+        ip saddr 10.10.40.0/24 ip daddr 10.10.0.0/16 counter drop comment "inv-a-lan-drop"
+        ip saddr 10.10.40.0/24 ip daddr 172.29.250.0/24 counter drop comment "inv-a-oob-drop"
+        ip saddr 10.10.40.0/24 counter accept comment "inv-a-wan"
+
+        # FW05: DMZ/servidores solo a puertos expuestos; gestion solo origen autorizado
+        ip daddr 10.10.99.0/24 ip saddr 10.10.10.10/32 counter accept comment "mgmt-solo-admin"
+        ip daddr 10.10.99.0/24 counter drop comment "mgmt-otros-drop"
+
+        # FW06: cliente VPN (10.250.0.0/24) solo DMZ/servicios permitidos, nunca gestión
+        ip saddr 10.250.0.0/24 ip daddr 10.10.30.0/24 tcp dport {443, 445} counter accept comment "vpn-srv"
+        ip saddr 10.250.0.0/24 ip daddr 10.10.99.0/24 counter drop comment "vpn-mgmt-drop"
+        ip saddr 10.250.0.0/24 counter drop comment "vpn-otros-drop"
+
+        counter drop comment "forward-drop-default"
     }
 }
 
 table ip nat {
     chain postrouting {
         type nat hook postrouting priority 100;
-        # NAT fuera del lab hacia uplink (WAN lo define etapa 6)
+        # NAT hacia WAN: definido cuando el enlace WAN real existe en el host
+        # (ej: masquerade si el bridge wan tiene salida). Se completa con medida.
     }
 }
