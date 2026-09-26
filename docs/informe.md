@@ -1,9 +1,9 @@
-# Informe académico — laboratorio de red empresarial
+# Informe académico — laboratorio de red segmentada
 
 **Resultado:** el laboratorio es viable como emulación GNS3 en Codespaces, no como plataforma Docker/OVS/OpenFlow. La aceptación literal independiente aprueba NET01, NET02, NET03, NET04, DNS01, APP01, DB01, SMB01, SEC01, VPN01, IDS01, MON02, OPS01, OPS02 y OPS03 (15 PASS de 22 requisitos); la matriz es la fuente de estado verificable.
 
 ## 1. Objetivo y alcance
-Se evaluó una red empresarial acotada en GitHub Codespaces con GNS3. El objetivo fue observar conectividad, segmentación, servicios de red, seguridad y operación sin declarar capacidades no demostradas.
+Se evaluó una red de laboratorio segmentada en GitHub Codespaces con GNS3. El objetivo fue observar conectividad, segmentación, servicios de red, seguridad y operación sin declarar capacidades no demostradas. Los nombres de segmento (ventas, administración, invitados, gestión, DMZ, WAN) son etiquetas del laboratorio, no referencias a una organización real.
 
 ## 2. Plataforma de ejecución
 GNS3 2.2.55 ejecuta QEMU con TCG, sin KVM, y Dynamips/EtherSwitch. La ausencia de CAP_NET_ADMIN/CAP_SYS_ADMIN impide Docker utilizable, datapaths OVS y puentes/TAP; el diagnóstico está en `docs/preflight.md` y `docs/estado.md`.

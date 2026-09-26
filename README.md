@@ -1,4 +1,4 @@
-# GNS3 Codespace enterprise-network lab
+# GNS3 Codespace segmented-network lab
 
 This repository documents the observed GNS3 lab running in a Codespace. It is a QEMU/Dynamips/VPCS lab—not a functional Docker, OVS, or OpenFlow deployment. The persisted project is `utp-network-lab` (`e792c7b3-8a50-4d0b-a93a-ab64e7e6e344`).
 
