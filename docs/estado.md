@@ -67,7 +67,7 @@ Evidencias en repositorio: `evidence/qemu/alpine-install.txt`, `evidence/qemu/pe
 - Tras restaurar con IDs nuevos, la consola real del nodo puede diferir del valor inicial del API hasta que se abre el proyecto (QEMU usa consola directa; GNS3 la proxifica). Leer el nodo por API antes de conectar.
 - `qemu-img rebase -u` re-apunta overlays sin reescribir datos; uso acordado únicamente entre copias verificadas.
 
-## POC VLAN con Ethernet switch nativo (Dynamips) — 2026-09-26
+## POC VLAN con Ethernet switch nativo (Dynamips) — 2026-09-26 *(registro histórico; los direccionamientos `10.10.x.x` fueron reemplazados por la numeración actual en `config/lab.yaml`)*
 
 **Resultado acotado: PASS.** Proyecto `vlan-poc` (`4faff441-825b-4429-aa4e-210f8aeda0e1`) con un `Ethernet switch` nativo (NM-16ESW sobre Dynamips) con puertos access: `Ethernet0` y `Ethernet2` en VLAN 10, `Ethernet1` en VLAN 20.
 

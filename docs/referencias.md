@@ -1,4 +1,6 @@
 # Referencias (fuentes primarias oficiales) — consulta: 2026-09-25
+
+Nota: las de SDN/OVS/OpenFlow y el servicio de ejemplo original (Kea, BIND9, OpenVPN) son referencias de la **especificación original**; no implican que estén implementadas en este entregable. Requisitos SDN01‑03 marcados `NOT_FEASIBLE_IN_PLATFORM` en la matriz.
 - GNS3 Server (GitHub) — https://github.com/GNS3/gns3-server
 - GNS3 REST API 2.2 — https://api.gns3.net/en/2.2/
 - GNS3 Docker support — https://docs.gns3.com/docs/emulators/docker-support-in-gns3/

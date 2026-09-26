@@ -40,7 +40,7 @@ For robust multi-node architecture, use the official `gns3fy` library (`pip inst
 import gns3fy
 
 GNS3_URL = "http://127.0.0.1:3080"
-project_name = "AutoLab-Enterprise"
+project_name = "MyLab"
 
 # 1. Connect and Open/Create Project
 server = gns3fy.Gns3Connector(GNS3_URL)
