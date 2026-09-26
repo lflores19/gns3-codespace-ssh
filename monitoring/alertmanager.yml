@@ -1,0 +1,8 @@
+route:
+  receiver: lab
+routes:
+  - match: { severity: critical }
+receivers:
+- name: lab
+  # sin integración externa: web/ui del propio alertmanager (documentado;
+  # NO serprometer email/webhook sin configurar credenciales)

@@ -1,0 +1,36 @@
+name: utp-lab-mon
+
+# Etapa 9: monitoreo. Mismo rol que VLAN99 en Codespace (Prom+Grafana),
+# ahora con Alertmanager y renderer (host nativo los resuelve).
+
+networks:
+  mgmt99: { driver: bridge, ipam: { config: [ { subnet: 10.10.99.0/24 } ] } }
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: lab-prometheus
+    volumes:
+      - ../../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../monitoring/alerts.yml:/etc/prometheus/alerts/alerts.yml:ro
+    networks: mgmt99
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: lab-alertmanager
+    volumes:
+      - ../../monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    networks: mgmt99
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: lab-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN:?}
+      GF_RENDERING_SERVER_URL: http://renderer:8081/render
+    networks: mgmt99
+
+  renderer:
+    image: grafana/grafana-image-renderer:3.11.0
+    container_name: lab-renderer
+    networks: mgmt99

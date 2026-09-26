@@ -1,0 +1,12 @@
+groups:
+- name: lab
+  rules:
+  - alert: TargetDown
+    expr: up == 0
+    for: 1m
+    labels: { severity: critical }
+    annotations: { summary: "Target caido: {{ $labels.instance }}" }
+  - alert: OvsCpuHigh
+    expr: rate(process_cpu_seconds_total[2m]) > 0.8
+    for: 5m
+    labels: { severity: warning }
