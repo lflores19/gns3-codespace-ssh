@@ -26,8 +26,8 @@ rm -rf "$STAGE"; mkdir -p "$STAGE"
 
 echo "[*] Copying portable files (excluding qcow2/img disks)"
 # Portable only: .gns3 topology + project metadata, NOT disk images.
-(cd "$SRC" && find . -maxdepth 3 \( -name '*.gns3' -o -name '*.json' -o -name '*.conf' -o -name '*.txt' \) \
-  ! -path './project-files/*' -exec cp --parents "{}" "$STAGE" \;)
+(cd "$SRC" && find . -maxdepth 4 \( -name '*.gns3' -o -name '*.json' -o -name '*.conf' -o -name '*.txt' -o -name '*.vpc' -o -name '*.nvram' \) \
+  ! -name '*.qcow2' ! -name '*.img' ! -name '*.iso' -exec cp --parents "{}" "$STAGE" \;)
 
 echo "[*] Capturing API references"
 curl -fsS "$API/projects/$PID" >"$STAGE/api-project.json"
