@@ -1,5 +1,8 @@
 name: utp-lab-sdn
 
+# Etapa 4: VLANs 10/20/30/40/99 etiquetadas en trunk SW1↔SW2 sobre el backbone
+# (tráfico tagged entre ambos switches) y clientes por VLAN en cada switch.
+
 networks:
   oob:
     driver: bridge
@@ -7,6 +10,13 @@ networks:
       config:
         - subnet: 172.29.250.0/24
           gateway: 172.29.250.1
+  backbone:        # enlace entre switches — transporta tramas 802.1Q
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: lab-backbone
+  vlan10_sw1: { driver: bridge, driver_opts: { com.docker.network.bridge.name: vlan10sw1 } }
+  vlan99_sw1: { driver: bridge, driver_opts: { com.docker.network.bridge.name: vlan99sw1 } }
+  vlan10_sw2: { driver: bridge, driver_opts: { com.docker.network.bridge.name: vlan10sw2 } }
 
 services:
   controller:
@@ -29,8 +39,13 @@ services:
       OVS_BRIDGE: br0
       OVS_CTRL_IP: 172.29.250.10
       OVS_CTRL_PORT: 6653
+      # eth0=oob  eth1=backbone(trunk)  eth2=acc VLAN10  eth3=acc VLAN99
+      OVS_PORTS: "eth1=trunk:10,20,30,40,99 eth2=access:10 eth3=access:99"
     networks:
-      oob: { ipv4_address: 172.29.250.11 }
+      oob: { ipv4_address: 172.29.250.11 }   # eth0
+      backbone: {}                            # eth1
+      vlan10_sw1: {}                          # eth2
+      vlan99_sw1: {}                          # eth3
     depends_on:
       controller: { condition: service_healthy }
     healthcheck:
@@ -48,8 +63,11 @@ services:
       OVS_BRIDGE: br0
       OVS_CTRL_IP: 172.29.250.10
       OVS_CTRL_PORT: 6653
+      OVS_PORTS: "eth1=trunk:10,20,30,40,99 eth2=access:10"
     networks:
-      oob: { ipv4_address: 172.29.250.12 }
+      oob: { ipv4_address: 172.29.250.12 }   # eth0
+      backbone: {}                            # eth1
+      vlan10_sw2: {}                          # eth2
     depends_on:
       controller: { condition: service_healthy }
     healthcheck:
@@ -58,3 +76,28 @@ services:
       timeout: 3s
       retries: 6
     restart: unless-stopped
+
+  # clientes de prueba por VLAN — etapa de verificación
+  pc10a:
+    image: alpine:3.20
+    container_name: lab-pc10a
+    command: sh -c 'apk add --no-cache iputils >/dev/null 2>&1 || true; sleep 3600'
+    networks:
+      vlan10_sw1: { ipv4_address: 10.10.10.101 }
+    cap_add: [ NET_ADMIN ]
+
+  pc10b:
+    image: alpine:3.20
+    container_name: lab-pc10b
+    command: sh -c 'apk add --no-cache iputils >/dev/null 2>&1 || true; sleep 3600'
+    networks:
+      vlan10_sw2: { ipv4_address: 10.10.10.102 }
+    cap_add: [ NET_ADMIN ]
+
+  pc99:
+    image: alpine:3.20
+    container_name: lab-pc99
+    command: sh -c 'apk add --no-cache iputils >/dev/null 2>&1 || true; sleep 3600'
+    networks:
+      vlan99_sw1: { ipv4_address: 10.10.99.20 }
+    cap_add: [ NET_ADMIN ]
