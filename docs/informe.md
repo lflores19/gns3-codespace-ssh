@@ -11,6 +11,26 @@ GNS3 2.2.55 ejecuta QEMU con TCG, sin KVM, y Dynamips/EtherSwitch. La ausencia d
 ## 3. Arquitectura implementada
 Los nodos QEMU Alpine proporcionan servicios; VPCS representa clientes. Dynamips aporta dos switches Ethernet y `fw1` actúa como router-on-a-stick. La persistencia se apoya en discos qcow2 y datos de GNS3 en el volumen de trabajo.
 
+### 3.1 Divergencias frente a la especificación original
+
+La especificación original (`.github/prompts/implementar-redes-sdn-docker.prompt.md`) definía una arquitectura distinta a la entregada. Las diferencias se derivan del diagnóstico `docs/preflight.md` (falta de capacidades Docker/OVS/TUN en Codespaces) y quedaron declaradas en `docs/matriz-requisitos.csv` como `NOT_FEASIBLE_IN_PLATFORM` o no evaluadas. Solo se listan contrastes verificados en el repositorio; no se agrega información no evidenciada.
+
+| Aspecto | Especificación original | Implementación real | Estado en matriz |
+|---|---|---|---|
+| Nodos de red | Contenedores Docker Linux | QEMU Alpine + Dynamips EtherSwitch + VPCS | ENV02: `NOT_FEASIBLE_IN_PLATFORM` |
+| Switching / SDN | 2× Open vSwitch, OpenFlow 1.3, controlador (Ryu/ODL/ONOS) | Dos EtherSwitch Dynamips sin plano SDN | SDN01–SDN03: `NOT_FEASIBLE_IN_PLATFORM` |
+| Plan de VLANs | 10.10.10/24, 10.10.20/24, 10.10.30/24, 10.10.40/24, 10.10.99/24 | 192.168.10/20/40/99, 172.16.0.0/24 (DMZ), 10.20.30.0/24 (WAN) | Documentado en `config/lab.yaml` y `docs/estado.md` |
+| Dominio | `empresa.test` | `lab.local` | Documentado |
+| DHCP | Kea u alternativa justificada | dnsmasq en `fw1` | NET01 `PASS` con dnsmasq |
+| DNS | BIND9 con zona y vistas | dnsmasq (A/PTR, UDP/TCP 53) | DNS01 `PASS` con dnsmasq |
+| VPN | OpenVPN TCP 1194 inicial; WG si hay UDP accesible | WireGuard (túnel 10.50.0.0/24) | VPN01 `PASS` (WG, no OpenVPN); VPN02 sin Windows: `NOT_EVALUATED` |
+| ISO/IPS | Suricata con espejo OVS, interfaz sin IP | tc `clsact`+`mirred` a `mirror0` dentro del mismo guest `fw1`, 2ª Suricata, EVE+PCAP | IDS01 `PASS` con limitación documentada |
+| Monitoreo | Prometheus + Grafana + Alertmanager, dashboards, alertas SDN | Prometheus + blackbox + node-exporter + Grafana (sin PNG renderer, sin Alertmanager) | MON02 `PASS`; MON01 `NOT_EVALUATED` |
+| Base de datos | Nodo dedicado en VLAN Servidores (30), `10.10.30.30` | PostgreSQL 16 co-ubicado en `mon1` (DMZ `172.16.0.30`), app en `client1` (`172.16.0.21`), aislamiento por HBA (L3 sobre VLAN L2 compartida, no firewall) | APP01/DB01 `PASS` con limitación HBA documentada |
+| Prueba de estrés | 30 minutos PERF01 | Omitida por decisión explícita del usuario | PERF01 `NOT_EVALUATED` |
+
+El desvío fue forzado por la plataforma (sin CAP_NET_ADMIN/CAP_SYS_ADMIN/`/dev/net/tun`/Docker funcional) y se registró con evidencia; no se declaró como cumplido lo no verificado.
+
 ## 4. Topología y VLAN
 El diseño contempla VLAN 10 (ventas), 20 (administración), 40 (invitados), 99 (gestión), 200 (DMZ) y 300 (WAN). `fw1` termina subinterfaces y enruta los prefijos documentados en `docs/estado.md`. NET02 es `PASS`: `evidence/NET02-fw1-trunk.pcap` captura el enlace activo `fw1:eth0 ↔ sw2:E7` configurado `dot1q` (no el POC anterior sólo VLAN10), y `evidence/NET02-trunk.txt` registra los seis tags y pings de control 3/3 por VLAN. El PCAP mide 220278 bytes, SHA-256 `4c72711aa2421c30c2ae277d590b342510b9da37c93d6d3021f539bbf3832dba`; algunas tramas no están etiquetadas, por lo que no se afirma que todas lo estén.
 
