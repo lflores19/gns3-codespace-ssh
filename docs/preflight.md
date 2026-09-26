@@ -1,5 +1,7 @@
 # Preflight / Diagnóstico del entorno
 
+> **Decisión arquitectónica (formal):** los requisitos Docker/OVS/OpenFlow/SDN están **fuera del alcance implementable en GitHub Codespaces** y asi quedan cerrados. La evidencia de ese cierre está en `docs/estado.md` (Fase 2: `dockerd` sin `NET_ADMIN`/`SYS_ADMIN`; `unshare` imposible por seccomp; `/dev/kvm` y `/dev/net/tun` ausentes; verificación viva repetida), `docs/matriz-requisitos.csv` (ENV02, SDN01–03 = `NOT_FEASIBLE_IN_PLATFORM`) y `docs/informe.md` §3.1. No se prometen ajustes futuros del devcontainer ni de la cuenta de GitHub para habilitarlos: es una restricción del sandbox gestionado por la plataforma.
+
 - Fecha UTC: 2026-09-25 23:20:10 Z
 - Hostname: codespaces-65b4a1
 - Usuario: vscode

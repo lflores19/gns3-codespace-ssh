@@ -56,7 +56,7 @@ Node and link identifiers are recorded in [`evidence/utp-lab-ids.json`](evidence
 
 ## Scope and platform limits
 
-- Codespaces lacks the capabilities needed for usable Docker networking, OVS datapaths, TAP/bridges, and OpenFlow. Docker-node builds, OVS switches, and SDN/OpenFlow claims are out of scope for this runtime.
+- Codespaces lacks the capabilities needed for usable Docker networking, OVS datapaths, TAP/bridges, and OpenFlow. Docker-node builds, OVS switches, and SDN/OpenFlow claims are out of scope for this runtime. **Architectural decision (final):** ENV02 and SDN01-03 are `NOT_FEASIBLE_IN_PLATFORM`, documented with live proof in `docs/preflight.md` and `docs/estado.md`; do not reopen the devcontainer or account for Docker/OVS as a fix.
 - VPN01 is evidenced for the QEMU WAN peer, including permitted DMZ access and denied management access; a Windows VPN client was not evaluated.
 - Versioned snapshots [`config/firewall/fw.nft`](config/firewall/fw.nft) and [`config/dns/lab.conf`](config/dns/lab.conf) record the observed firewall and DNS configuration. They do not automatically rebuild or update guest qcow2 disks.
 - PERF01 was explicitly skipped. Do not interpret point-in-time resource observations as a performance test.
