@@ -1,0 +1,33 @@
+%YAML 1.1
+---
+vars:
+  address-groups:
+    HOME_NET: any
+    EXTERNAL_NET: any
+
+af-packet:
+  - interface: mirror0
+    cluster-id: 101
+    cluster-type: cluster_flow
+    defrag: yes
+
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: eve.json
+      types:
+        - alert
+  - pcap-log:
+      enabled: yes
+      filename: mirror.pcap
+      limit: 10mb
+      max-files: 1
+      mode: normal
+
+logging:
+  default-log-level: error
+
+default-rule-path: /etc/suricata/rules
+rule-files:
+  - lab.rules
