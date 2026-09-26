@@ -4,6 +4,10 @@ This repository documents the observed GNS3 lab running in a Codespace. It is a 
 
 > **Retired entrypoints — do not run:** `scripts/build.sh`, `scripts/start-lab.sh`, and `scripts/provision-phase2.sh` are legacy Docker/provisioning paths. Use `.devcontainer` setup/start-daemon and the current QEMU runbook instead. `scripts/test-lab.sh` is not evidence that the current lab is proven.
 
+## Portability to another GitHub account / Codespace
+
+Cloning this repository gives you the environment, docs, and evidence — **not** the running lab. To redeploy elsewhere, use `scripts/export-lab.sh` (inside the source Codespace) and `scripts/import-lab.sh` (inside the destination), following `docs/deploy-en-otra-cuenta.md`. Disk images (qcow2) and secrets are not exported.
+
 ## Quick path: inspect the persisted project
 
 Use the GNS3 API against the already persisted project; do **not** run fictional build or create scripts. From the Codespace where `gns3server` is running:
