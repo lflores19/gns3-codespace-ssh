@@ -1,0 +1,13 @@
+{
+  "observed_utc": "2026-09-26T05:48:48Z",
+  "protocol": "WireGuard (ChaCha20-Poly1305 / Curve25519)",
+  "topology": "wan-vpn (10.20.30.60, wg0: 10.50.0.2) <-> fw1 (10.20.30.1, wg0: 10.50.0.1) across VLAN300 WAN",
+  "checks": {
+    "ping_tunnel_gw": true,
+    "ping_dmz_via_tunnel": true,
+    "handshake_active": true,
+    "transfer_counters": true
+  },
+  "passed": true,
+  "raw_file": "evidence/vpn-tests.txt"
+}

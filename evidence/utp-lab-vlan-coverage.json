@@ -1,0 +1,30 @@
+{
+  "observed_utc": "2026-09-26T04:58:49Z",
+  "project_id": "e792c7b3-8a50-4d0b-a93a-ab64e7e6e344",
+  "hosts_up": {
+    "admin20_dhcp": true,
+    "mgmt99_own_gw": true,
+    "wan300_own_gw": true
+  },
+  "matrix": {
+    "fw06_admin_to_gestion_allowed": true,
+    "admin_to_dmz_icmp_blocked": true,
+    "fw06_invitados_to_gestion_blocked": true,
+    "fw06_wan_to_gestion_blocked": true,
+    "wan_to_dmz_icmp_blocked": true,
+    "regression_ventas_to_dmz_dns_ping_ok": true
+  },
+  "nft_rule_added": "ip saddr 192.168.20.0/24 ip daddr 192.168.99.0/24 accept (FW06 excepcion administracion)",
+  "raw": {
+    "dhcp_admin20": "         : 192.168.20.1  \r\nDHCP SERVER : 192.168.20.1\r\nDHCP LEASE  : 43198, 43200/21600/37800\r\nDOMAIN NAME : lab.local\r\nMAC         : 00:50:79:66:68:04\r\nLPORT       : 20048\r\nRHOST:PORT  : 127.0.0.1:20049\r\nMTU         : 1500\r\n\r\n\rpc-admin20> ",
+    "mgmt_own_gw": "192.168.99.1 icmp_seq=2 ttl=64 time=0.770 ms\r\n84 bytes from 192.168.99.1 icmp_seq=3 ttl=64 time=0.810 ms\r\n84 bytes from 192.168.99.1 icmp_seq=4 ttl=64 time=0.851 ms\r\n84 bytes from 192.168.99.1 icmp_seq=5 ttl=64 time=0.799 ms\r\n\r\n\rpc-mgmt99> ",
+    "wan_own_gw": "es from 10.20.30.1 icmp_seq=2 ttl=64 time=0.797 ms\r\n84 bytes from 10.20.30.1 icmp_seq=3 ttl=64 time=0.630 ms\r\n84 bytes from 10.20.30.1 icmp_seq=4 ttl=64 time=0.706 ms\r\n84 bytes from 10.20.30.1 icmp_seq=5 ttl=64 time=0.894 ms\r\n\r\n\rpc-wan300> ",
+    "admin_to_mgmt": "92.168.99.2 icmp_seq=2 ttl=63 time=1.389 ms\r\n84 bytes from 192.168.99.2 icmp_seq=3 ttl=63 time=1.297 ms\r\n84 bytes from 192.168.99.2 icmp_seq=4 ttl=63 time=1.349 ms\r\n84 bytes from 192.168.99.2 icmp_seq=5 ttl=63 time=1.164 ms\r\n\r\n\rpc-admin20> ",
+    "admin_to_dmz20": "\r\n\rpc-admin20> \r\n\rpc-admin20> \r\n\rpc-admin20> ping 172.16.0.20\r\n\r\n172.16.0.20 icmp_seq=1 timeout\r\n172.16.0.20 icmp_seq=2 timeout\r\n172.16.0.20 icmp_seq=3 timeout\r\n172.16.0.20 icmp_seq=4 timeout\r\n",
+    "inv40_to_mgmt": "192.168.99.2 icmp_seq=5 timeout\r\n\r\n\rpc-inv40> \r\n\rpc-inv40> \r\n\rpc-inv40> \r\n\rpc-inv40> ping 192.168.99.2\r\n\r\n192.168.99.2 icmp_seq=1 timeout\r\n192.168.99.2 icmp_seq=2 timeout\r\n192.168.99.2 icmp_seq=3 timeout\r\n192.168.99.2 icmp_seq=4 timeout\r\n",
+    "wan_to_mgmt": "\r\n\rpc-wan300> \r\n\rpc-wan300> \r\n\rpc-wan300> ping 192.168.99.2\r\n\r\n192.168.99.2 icmp_seq=1 timeout\r\n192.168.99.2 icmp_seq=2 timeout\r\n192.168.99.2 icmp_seq=3 timeout\r\n192.168.99.2 icmp_seq=4 timeout\r\n",
+    "wan_to_dmz20": "\r\n192.168.99.2 icmp_seq=5 timeout\r\n\r\n\r\n\rpc-wan300> \r\n\rpc-wan300> \r\n\rpc-wan300> ping 172.16.0.20\r\n\r\n172.16.0.20 icmp_seq=1 timeout\r\n172.16.0.20 icmp_seq=2 timeout\r\n172.16.0.20 icmp_seq=3 timeout\r\n172.16.0.20 icmp_seq=4 timeout\r\n",
+    "ventas_to_dmz_still": "s from 172.16.0.20 icmp_seq=2 ttl=63 time=2.036 ms\r\n84 bytes from 172.16.0.20 icmp_seq=3 ttl=63 time=1.706 ms\r\n84 bytes from 172.16.0.20 icmp_seq=4 ttl=63 time=2.228 ms\r\n84 bytes from 172.16.0.20 icmp_seq=5 ttl=63 time=1.763 ms\r\n\r\n\rpc-a10> "
+  },
+  "passed": true
+}

@@ -1,0 +1,60 @@
+{
+  "project_id": "e792c7b3-8a50-4d0b-a93a-ab64e7e6e344",
+  "sw1": "7e0ac498-b987-4349-ad8a-8e2ace322a72",
+  "sw2": "f22da109-b185-4339-8887-240649e4a462",
+  "trunk_link_id": "e3357617-4eaa-4b62-ab36-5244f2561962",
+  "vpcs": {
+    "pc-a10": {
+      "node_id": "2e49dd48-2fd7-4fd4-b285-97abf2dcd417",
+      "link": "d5d14a97-00bb-46a1-9246-104dce22e3a9"
+    },
+    "pc-d10": {
+      "node_id": "b21b5828-10d2-4957-be69-c9b4472d2f2e",
+      "link": "28249ac9-31c5-4af7-b3c5-1ac8a4ca54f0"
+    },
+    "pc-dmz": {
+      "node_id": "b85e6e13-2f8f-4fbf-849f-27f62de5595d",
+      "link": "c85c1f49-faf8-45fe-92c0-ab9c4ede9795"
+    },
+    "pc-inv40": {
+      "node_id": "f7fdf8e4-0480-4f88-9c42-8c49977e38d0"
+    },
+    "pc-admin20": {
+      "node_id": "664e95c6-374a-4091-9488-40465729d45f",
+      "link": "00807b28-0cc6-4d20-a40d-d215d0b10f6d"
+    },
+    "pc-mgmt99": {
+      "node_id": "d2ea37ad-444b-4d49-a229-d8cf89efc22d",
+      "link": "41082186-fe5f-4660-812e-5927ccf351c6"
+    },
+    "pc-wan300": {
+      "node_id": "421da293-a288-4355-ac91-c0810beffae6",
+      "link": "74e6875d-e491-43e2-9d17-12fe9c5540b2"
+    }
+  },
+  "qemu": {
+    "web1": {
+      "node_id": "f930f3c4-ecdf-4c43-ab73-98fe3db88d1d",
+      "link": "33175252-578a-4743-85f8-4f1b26a83f1a"
+    },
+    "client1": {
+      "node_id": "0c9673b1-0c72-4c37-a53b-ec31cbfc54e9",
+      "link": "75839cd8-8c1b-4b87-989a-becc54be7078"
+    },
+    "fw1": {
+      "node_id": "0549d1a7-bf1a-4b31-bf7b-3497cb234b2e",
+      "link_trunk": "0643a55b-52c9-4e6d-af41-43b358ac804f",
+      "adapters": 1
+    },
+    "admin-vm": {
+      "node_id": "839ecc1e-8784-4b60-9a55-105e0fc8d7aa",
+      "console": 5034,
+      "base_image_cleared": "alpine-virt-3.22.6-installed-base.qcow2"
+    },
+    "wan-vpn": {
+      "node_id": "ec9c6bb7-51b4-40b6-9bf8-b02bc33ded2a",
+      "console": 5036,
+      "link": "de5816f8-b1dd-4722-a4bd-0928a5633a3a"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "observed_utc": "2026-09-26T03:00:29Z",
+  "node": "web1",
+  "project_id": "e792c7b3-8a50-4d0b-a93a-ab64e7e6e344",
+  "node_id": "f930f3c4-ecdf-4c43-ab73-98fe3db88d1d",
+  "fix": "rc-update add networking boot (service was stopped/not in runlevel)",
+  "restart_via": "GNS3 API stop/start",
+  "ip_after_reboot": "172.16.0.20/24 answered ping from pc-dmz (172.16.0.50)",
+  "ifup_persistent": true
+}

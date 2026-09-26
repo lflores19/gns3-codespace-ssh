@@ -1,0 +1,7 @@
+NET02 — 802.1Q tagged capture on active fw1 trunk
+UTC finalized: 2026-09-26T18:19:52Z
+GNS3 project e792c7b3-8a50-4d0b-a93a-ab64e7e6e344; API link df8bab03-2462-46e2-b35e-a03ca9458d34: fw1 adapter0/port0 eth0 <-> sw2 Ethernet7 dot1q. GNS3 start_capture/stop_capture on this exact link, then copied raw capture to evidence/NET02-fw1-trunk.pcap.
+PCAP bytes 220278, SHA256 4c72711aa2421c30c2ae277d590b342510b9da37c93d6d3021f539bbf3832dba, total frames 489, tagged 802.1Q frames 458.
+VLAN tagged frame counts: 10:10, 20:10, 40:10, 99:10, 200:386, 300:32.
+Traffic generated during capture: VLAN10 pc-a10→gateway 3/3, VLAN20 pc-admin20→gateway 3/3, VLAN40 pc-inv40→gateway 3/3, VLAN99 pc-mgmt99→gateway 3/3, VLAN200 web1→gateway 3/3, VLAN300 wan-vpn→gateway 3/3. Note pc-wan300 node has no current link; VLAN300 test used active wan-vpn at sw2:E3.
+Result: PASS — all six planned VLAN tags observed on the fw1-sw2 dot1q link with a preserved raw PCAP. Some untagged frames exist; this evidence does not claim every frame was tagged.

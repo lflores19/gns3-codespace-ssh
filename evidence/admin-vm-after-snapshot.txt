@@ -1,0 +1,17 @@
+OPS01_ADMIN_AFTER
+alpine-gns3:~# alpine-gns3:~# auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+alpine-gns3:~# alpine-gns3:~# 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 0c:9e:cc:1e:00:00 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.20.140/24 brd 192.168.20.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::e9e:ccff:fe1e:0/64 scope link 
+       valid_lft forever preferred_lft forever
+alpine-gns3:~# alpine-gns3:~# default via 192.168.20.1 dev eth0  metric 202 
+192.168.20.0/24 dev eth0 scope link  src 192.168.20.140 
+alpine-gns3:~# alpine-gns3:~# SMB_OK
+alpine-gns3:~# alpine-gns3:~# OPS01_ADMIN_DONE
+alpine-gns3:~

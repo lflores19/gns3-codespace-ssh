@@ -1,0 +1,27 @@
+{
+  "observed_utc": "2026-09-26T12:15:29Z",
+  "requirement": "OPS01",
+  "nodes_restarted": [
+    "web1",
+    "admin-vm"
+  ],
+  "action": "GNS3 API stop/start, QEMU TCG boot ~50s each",
+  "web1_comparison": {
+    "interfaces": true,
+    "samba": true,
+    "shares": true,
+    "http": true
+  },
+  "admin_vm_after": {
+    "dhcp_config": "iface eth0 inet dhcp (persistido)",
+    "ip_assigned": "192.168.20.140/24 (lease VLAN20)",
+    "default_gw": "192.168.20.1",
+    "smb_reachability": true
+  },
+  "status": "PASS",
+  "raw_files": [
+    "web1-before-snapshot.txt",
+    "web1-after-snapshot.txt",
+    "admin-vm-after-snapshot.txt"
+  ]
+}

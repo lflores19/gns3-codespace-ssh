@@ -1,0 +1,6 @@
+NET04 — guest isolation with healthy controls
+UTC: 2026-09-26T18:08:47Z
+LAN target admin-vm 192.168.20.140: allowed pc-admin20 VLAN20 ICMP 3/3; guest pc-inv40 VLAN40 ICMP 0/3; fw1 guest→LAN counter 3 drop.
+Management target pc-mgmt99 192.168.99.2: allowed admin-vm VLAN20 ICMP 3/3; guest pc-inv40 ICMP 0/3; fw1 guest→management counter 3 drop.
+DMZ service control web1 172.16.0.20:445: admin-vm nc -z exit0 and prior authenticated SMB allowed; guest pc-inv40 TCP VPCS ping -3 -p445 -c3 gave 3/3 timeouts; fw1 guest→SMB counter 9 drop.
+Result: PASS — same healthy LAN/management targets reachable from permitted origins and blocked from guest; SMB service independently healthy while guest blocked.

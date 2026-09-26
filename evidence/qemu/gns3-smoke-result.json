@@ -1,0 +1,22 @@
+{
+  "timestamp_utc": "2026-09-26T00:40:22Z",
+  "gns3_version": "2.2.55",
+  "project_id": "d2faff3d-d232-4e4a-88a2-52ece96acdd7",
+  "qemu_node": {
+    "id": "c7b0c020-e79b-4070-a9b4-cea01589088d",
+    "status": "started",
+    "console": 5000,
+    "adapter": "virtio-net-pci"
+  },
+  "vpcs_node": {
+    "id": "eb9ecf7c-f6cd-4255-97e7-232acecd705a",
+    "status": "started",
+    "console": 5002
+  },
+  "link_ids": [
+    "eec793e6-c055-4457-9f08-e5813d914d90"
+  ],
+  "iso_sha256": "f1e3bbfd700709a8a931748152cec16c539c45b8fa0a04e95a3d38cf2231da98",
+  "ping_transcript": "ping -c 3 -W 2 10.10.10.2\r\nPING 10.10.10.2 (10.10.10.2): 56 data bytes\r\n64 bytes from 10.10.10.2: seq=0 ttl=64 time=1.177 ms\r\n64 bytes from 10.10.10.2: seq=1 ttl=64 time=0.843 ms\r\n64 bytes from 10.10.10.2: seq=2 ttl=64 time=0.961 ms\r\n\r\n--- 10.10.10.2 ping statistics ---\r\n3 packets transmitted, 3 packets received, 0% packet loss\r\nround-trip min/avg/max = 0.843/0.993/1.177 ms\r\nlocalhost:~# \r\nlocalhost:~# \u001b[6n",
+  "ping_3_of_3": true
+}

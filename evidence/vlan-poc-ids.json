@@ -1,0 +1,13 @@
+{
+  "project_id": "4faff441-825b-4429-aa4e-210f8aeda0e1",
+  "switch_id": "86663b35-6c76-48ab-a67f-55084d8a9b6c",
+  "vpc": {
+    "vpc-a": "09cc84c0-008f-4fc0-9163-8a95189f6c06",
+    "vpc-b": "f2319b19-f508-41df-a02f-0caa34364239",
+    "vpc-c": "eb469b6f-9515-4218-9147-84192390b029"
+  },
+  "sw2_id": "01865dac-38a3-4651-a3b5-a4dc2e6006e5",
+  "trunk_link_id": "f7dcfadf-469e-406d-a5ab-a9d41681d200",
+  "vpc_d": "a1c6250d-35d2-47a7-b52d-53eb2c70684b",
+  "vpc_e": "59874ae2-572f-4fd6-a211-788a581e4706"
+}

@@ -1,0 +1,9 @@
+DB01 — authenticated PostgreSQL source restriction
+UTC: 2026-09-26T17:14:52Z
+Architecture: PostgreSQL 16 on mon1 172.16.0.30:5432, app on client1 172.16.0.21:5000, web1 negative client 172.16.0.20. All are VLAN200.
+Positive: psycopg2 from app/client1 using inventory_app valid credential, query SELECT current_user,inet_client_addr(),count(*) FROM items -> (inventory_app, 172.16.0.21, 1). PASS.
+Negative same valid credential: psql 16.15 from web1 using temporary mode-600 PGPASSFILE -> exit 2; server response: pg_hba.conf rejects connection for host 172.16.0.20, user inventory_app, database inventario. Temporary credential file removed. PASS.
+Invalid password control: from app/client1 (allowed source), deliberately invalid password -> nonzero exit; password authentication failed. PASS.
+pg_hba.conf relevant policy: local postgres peer; host inventario inventory_app 172.16.0.21/32 scram-sha-256; host all all 0.0.0.0/0 reject; host all all ::/0 reject.
+Scope limitation: restriction is PostgreSQL HBA source+SCRAM on a shared DMZ L2 VLAN, NOT nftables isolation; source-IP spoofing or compromise of app host is not excluded. DB host is co-located with monitoring to avoid another QEMU VM. Credentials and hashes omitted; secret lives outside repo.
+Result: PASS for authenticated allowed/denied origin under stated shared-VLAN threat model.

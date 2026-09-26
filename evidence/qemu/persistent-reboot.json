@@ -1,0 +1,10 @@
+{
+  "observed_utc": "2026-09-26T01:02:47Z",
+  "project_id": "a8ca363c-cbe7-45f1-9918-4e07af1137c5",
+  "node_id": "ce992561-7843-42be-a635-d12c9c09bb06",
+  "boot_disk": "alpine-virt-3.22.6-installed-base.qcow2",
+  "node_status": "started",
+  "console_port": 5004,
+  "marker_read_after_reboot": true,
+  "transcript_tail": " \r\nalpine-gns3:~# cat /root/persistence-proof.txt\r\npersistent-proof-2026-09-26\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6n"
+}

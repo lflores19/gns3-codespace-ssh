@@ -1,0 +1,30 @@
+{
+  "observed_utc": "2026-09-26T01:59:40Z",
+  "moved_dirs": [
+    "images",
+    "projects",
+    "appliances",
+    "symbols",
+    "configs"
+  ],
+  "destination": "/workspaces/.gns3-data/GNS3",
+  "symlink_root": "/home/vscode/GNS3",
+  "projects_after_daemon_restart": [
+    [
+      "qemu-persistent-poc",
+      "closed"
+    ],
+    [
+      "qemu-tcg-smoke",
+      "closed"
+    ],
+    [
+      "qemu-persistent-restore-test-2026-09-26",
+      "closed"
+    ]
+  ],
+  "node_id": "ce992561-7843-42be-a635-d12c9c09bb06",
+  "console_port": 5004,
+  "marker_read_after_migration": true,
+  "transcript_tail": "ine systems.\r\nSee <https://wiki.alpinelinux.org/>.\r\n\r\nYou can setup the system with the command: setup-alpine\r\n\r\nYou may change this message by editing /etc/motd.\r\n\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6ncat /root/persistence-proof.txt\r\npersistent-proof-2026-09-26\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6n"
+}

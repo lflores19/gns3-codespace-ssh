@@ -1,0 +1,7 @@
+DNS01 — forward/reverse DNS over UDP and TCP port 53
+Client: admin-vm (VLAN20, 192.168.20.140); server: fw1 dnsmasq at 192.168.20.1:53. Synthetic DNS wire-format queries sent with BusyBox nc, responses parsed and validated for ID, rcode, answer type and value.
+2026-09-26T17:25:54Z UDP web1.lab.local A -> 172.16.0.20; rcode=NOERROR; answers=1; id=0x1234; ttl=0; response_bytes=48
+2026-09-26T17:26:05Z TCP web1.lab.local A -> 172.16.0.20; rcode=NOERROR; answers=1; id=0x1234; ttl=0; response_bytes=48
+2026-09-26T17:26:16Z UDP 20.0.16.172.in-addr.arpa PTR -> web1.lab.local; rcode=NOERROR; answers=1; id=0x1234; ttl=0; response_bytes=70
+2026-09-26T17:26:27Z TCP 20.0.16.172.in-addr.arpa PTR -> web1.lab.local; rcode=NOERROR; answers=1; id=0x1234; ttl=0; response_bytes=70
+Result: PASS; 4/4 actual responses, no query transcript echo assertions.

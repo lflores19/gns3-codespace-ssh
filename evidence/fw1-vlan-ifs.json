@@ -1,0 +1,15 @@
+{
+  "observed_utc": "2026-09-26T04:05:58Z",
+  "node": "fw1",
+  "vlan_subinterfaces": {
+    "10": "192.168.10.1/24",
+    "20": "192.168.20.1/24",
+    "40": "192.168.40.1/24",
+    "99": "192.168.99.1/24",
+    "200": "172.16.0.1/24",
+    "300": "10.20.30.1/24"
+  },
+  "ip_forward": "sysctl.d/99-forward.conf",
+  "autostart": "/etc/local.d/fw-net.start + local runlevel",
+  "transcript_tail": "addr show | grep inet\r\n    inet 192.168.10.1/24 scope global eth0.10\r\n    inet 192.168.20.1/24 scope global eth0.20\r\n    inet 192.168.40.1/24 scope global eth0.40\r\n    inet 192.168.99.1/24 scope global eth0.99\r\n    inet 172.16.0.1/24 scope global eth0.200\r\n    inet 10.20.30.1/24 scope global eth0.300\r\nfw1:~# \r\nfw1:~# \u001b[6nsync\r\nfw1:~# \r\nfw1:~# \u001b[6necho FW1CFG_DONE\r\nFW1CFG_DONE\r\nfw1:~# \r\nfw1:~# \u001b[6n"
+}

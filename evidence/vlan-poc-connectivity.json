@@ -1,0 +1,11 @@
+{
+  "observed_utc": "2026-09-26T02:18:12Z",
+  "project_id": "4faff441-825b-4429-aa4e-210f8aeda0e1",
+  "topology": "vpc-a(VLAN10 10.10.10.2), vpc-c(VLAN10 10.10.10.3), vpc-b(VLAN20 10.10.20.2) via sw1 access ports",
+  "intra_vlan_ping_a_to_c": true,
+  "cross_vlan_ping_a_to_b": false,
+  "expectation": "intra True, cross False",
+  "passed": true,
+  "raw_intra_tail": "rom 10.10.10.3 icmp_seq=1 ttl=64 time=0.232 ms\r\n84 bytes from 10.10.10.3 icmp_seq=2 ttl=64 time=0.361 ms\r\n84 bytes from 10.10.10.3 icmp_seq=3 ttl=64 time=0.365 ms\r\n84 bytes from 10.10.10.3 icmp_seq=4 ttl=64 time=0.283 ms\r\n84 bytes from 10.10.10.3 icmp_seq=5 ttl=64 time=0.295 ms\r\n\r\n\rvpc-a> \r\n\rvpc-a> ",
+  "raw_cross_tail": "ping 10.10.20.2\r\n\r\nNo gateway found\r\n\r\n\rvpc-a> \r\n\rvpc-a> "
+}

@@ -1,0 +1,8 @@
+NET01 — DHCP VLAN10/20/40 and renewal
+UTC finalized: 2026-09-26T17:57:57+00:00
+DHCP server: fw1 dnsmasq; pools 192.168.10.100-159, .20.100-159, .40.100-159; lease duration 43200s; domain lab.local.
+VLAN10 pc-d10 MAC 00:50:79:66:68:01: ip dhcp DDORA -> 192.168.10.138/24 GW 192.168.10.1; show ip DNS 192.168.10.1, DHCP SERVER .10.1, lease 43196/43200/21600/37800. Test host subsequently restored to persistent static 192.168.10.3/24, gateway .10.1.
+VLAN20 pc-admin20 MAC 00:50:79:66:68:04: ip dhcp DDORA -> 192.168.20.141/24 GW 192.168.20.1; show ip DNS 192.168.20.1, DHCP SERVER .20.1, lease 43196/43200/21600/37800. Second ip dhcp DORA retained .141/24 and extended dnsmasq expiry from 1790488524 to 1790488612 (+88 seconds).
+VLAN40 pc-inv40 MAC 00:50:79:66:68:03: ip dhcp DDORA -> 192.168.40.140/24 GW 192.168.40.1; show ip DNS 192.168.40.1, DHCP SERVER .40.1, lease 43196/43200/21600/37800.
+Latest server lease expiries: pc-d10=1790488506, pc-admin20=1790488612, pc-inv40=1790488542.
+Result: PASS — IP, /24 mask, gateway, DNS and lease verified in all three VLANs; VLAN20 renewal kept IP and extended expiry.

@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-09-26T18:42:04.146178+0000",
+  "flow_id": 1190781919542654,
+  "in_iface": "mirror0",
+  "event_type": "alert",
+  "vlan": [
+    20
+  ],
+  "src_ip": "192.168.20.140",
+  "src_port": 42541,
+  "dest_ip": "172.16.0.20",
+  "dest_port": 445,
+  "proto": "TCP",
+  "pkt_src": "wire/pcap",
+  "alert": {
+    "action": "allowed",
+    "gid": 1,
+    "signature_id": 1000002,
+    "rev": 1,
+    "signature": "LAB SMB connection attempt",
+    "category": "",
+    "severity": 3
+  },
+  "direction": "to_server",
+  "flow": {
+    "pkts_toserver": 1,
+    "pkts_toclient": 0,
+    "bytes_toserver": 78,
+    "bytes_toclient": 0,
+    "start": "2026-09-26T18:42:04.146178+0000",
+    "src_ip": "192.168.20.140",
+    "dest_ip": "172.16.0.20",
+    "src_port": 42541,
+    "dest_port": 445
+  },
+  "capture_file": "/var/log/suricata/mirror/mirror.pcap.1790448073"
+}

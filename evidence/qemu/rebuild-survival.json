@@ -1,0 +1,13 @@
+{
+  "observed_utc": "2026-09-26T02:05:45Z",
+  "boot_id_after_rebuild": "61f6a71c-7275-42f5-ae30-c1fb1f2ab797",
+  "codespace": "cuddly-bassoon-966v6pj7pvwphp9wj",
+  "project_id": "a8ca363c-cbe7-45f1-9918-4e07af1137c5",
+  "node_id": "ce992561-7843-42be-a635-d12c9c09bb06",
+  "console_port": 5004,
+  "projects_registered_after_rebuild": 3,
+  "backup_archive_survived": true,
+  "root_password_resceded_from": "/workspaces/.gns3-data/poc-root-password",
+  "marker_read_after_rebuild": true,
+  "transcript_tail": "ine systems.\r\nSee <https://wiki.alpinelinux.org/>.\r\n\r\nYou can setup the system with the command: setup-alpine\r\n\r\nYou may change this message by editing /etc/motd.\r\n\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6ncat /root/persistence-proof.txt\r\npersistent-proof-2026-09-26\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6n"
+}

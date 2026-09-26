@@ -1,0 +1,15 @@
+{
+  "observed_utc": "2026-09-26T02:34:19Z",
+  "capture_file": "evidence/vlan-trunk.pcap",
+  "link": "sw1:Ethernet3(dot1q) <-> sw2:Ethernet2(dot1q)",
+  "link_id": "f7dcfadf-469e-406d-a5ab-a9d41681d200",
+  "frames_8021q": 25,
+  "vlans_observed": [
+    "10"
+  ],
+  "arp_across_trunk": true,
+  "icmp_echo_requests": 10,
+  "icmp_echo_replies": 10,
+  "passed": true,
+  "tcpdump_head": "02:32:14.049394 00:50:79:66:68:00 > ff:ff:ff:ff:ff:ff, ethertype 802.1Q (0x8100), length 68: vlan 10, p 0, ethertype ARP (0x0806), Request who-has 10.10.10.6 (ff:ff:ff:ff:ff:ff) tell 10.10.10.2, length 50\n02:32:14.049618 00:50:79:66:68:03 > 00:50:79:66:68:00, ethertype 802.1Q (0x8100), length 68: vlan 10, p 0, ethertype ARP (0x0806), Reply 10.10.10.6 is-at 00:50:79:66:68:03, length 50\n02:32:14.050415 00:50:79:66:68:00 > 00:50:79:66:68:03, ethertype 802.1Q (0x8100), length 102: vlan 10, p 0, ethertype IPv4 (0x0800), 10.10.10.2 > 10.10.10.6: ICMP echo request, id 44590, seq 1, length 64"
+}

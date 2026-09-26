@@ -1,0 +1,12 @@
+IDS_SCAN_START; ps | grep suricata | grep -v grep; cat /var/
+log/suricata/fast.log 2>/dev/null | tail -20; echo IDS_SCAN_END
+IDS_SCAN_START
+ 1860 root      0:00 {Suricata-Main} suricata -c /etc/suricata/lab.yaml -i eth0 -D --pidfile /run/suricata.pid -l /var/log/suricata
+09/26/2026-06:12:58.190598  [**] [1:1000001:1] LAB ICMP echo observed on fw1 trunk [**] [Classification: (null)] [Priority: 3] {ICMP} 192.168.40.140:8 -> 172.16.0.20:0
+09/26/2026-06:13:00.191032  [**] [1:1000001:1] LAB ICMP echo observed on fw1 trunk [**] [Classification: (null)] [Priority: 3] {ICMP} 192.168.40.140:8 -> 172.16.0.20:0
+09/26/2026-06:13:02.191317  [**] [1:1000001:1] LAB ICMP echo observed on fw1 trunk [**] [Classification: (null)] [Priority: 3] {ICMP} 192.168.40.140:8 -> 172.16.0.20:0
+09/26/2026-06:13:04.191871  [**] [1:1000001:1] LAB ICMP echo observed on fw1 trunk [**] [Classification: (null)] [Priority: 3] {ICMP} 192.168.40.140:8 -> 172.16.0.20:0
+09/26/2026-06:13:06.192777  [**] [1:1000001:1] LAB ICMP echo observed on fw1 trunk [**] [Classification: (null)] [Priority: 3] {ICMP} 192.168.40.140:8 -> 172.16.0.20:0
+09/26/2026-06:13:46.936537  [**] [1:1000002:1] LAB SMB connection attempt [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.20.140:49416 -> 172.16.0.20:445
+09/26/2026-06:13:46.943796  [**] [1:1000002:1] LAB SMB connection attempt [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.20.140:49416 -> 172.16.0.20:445
+IDS_SCAN_END

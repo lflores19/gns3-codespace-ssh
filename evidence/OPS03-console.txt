@@ -1,0 +1,18 @@
+OPS03 — console via Codespace SSH tunnel
+UTC: 2026-09-26T16:28:50Z
+Local 127.0.0.1:15014 -> Codespace 127.0.0.1:5014
+Node: pc-a10, console 5014, status started
+Command: show ip
+--- SERVER OUTPUT AFTER COMMAND ---
+show ip
+NAME        : pc-a10[1]
+IP/MASK     : 192.168.10.2/24
+GATEWAY     : 192.168.10.1
+DNS         :
+MAC         : 00:50:79:66:68:00
+LPORT       : 20040
+RHOST:PORT  : 127.0.0.1:20041
+MTU         : 1500
+pc-a10>
+--- END SERVER OUTPUT ---
+Result: PASS — IP/MASK 192.168.10.2/24; gateway 192.168.10.1.

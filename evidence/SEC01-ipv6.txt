@@ -1,0 +1,6 @@
+SEC01 IPv6 bypass test — 2026-09-26T17:37:19Z
+fw1 IPv4 table ip filter only originally; added persistent table ip6 filter forward policy drop + explicit counter drop in /etc/nftables/fw.nft. Tested with temporary ULA addresses/routes and forwarding=1; cleaned addresses/routes and restored forwarding=0 afterward.
+Direct fw1 VLAN200 -> web1 fd20:200::20: 2/2 ICMPv6 echoes (destination healthy).
+Admin VLAN20 -> fw1 fd20:20::1: 2/2 ICMPv6 echoes (source path healthy).
+Admin VLAN20 -> web1 VLAN200 via fw1 with forwarding temporarily enabled: 0/3 replies; ip6 nft forward counter 0 -> 3 (+3); policy drop. Bypass blocked.
+Result: PASS for IPv6 bypass attempt only. Full SEC01 IPv4 matrix/counters requires separate evidence.

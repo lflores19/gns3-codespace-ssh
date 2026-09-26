@@ -1,0 +1,7 @@
+{
+  "a_to_d_intra_vlan10_across_trunk_ok": true,
+  "replies": 5,
+  "a_to_e_cross_vlan_same_subnet_replies": 0,
+  "tail1": "64 time=0.251 ms\r\n84 bytes from 10.10.10.6 icmp_seq=2 ttl=64 time=0.390 ms\r\n84 bytes from 10.10.10.6 icmp_seq=3 ttl=64 time=0.410 ms\r\n84 bytes from 10.10.10.6 icmp_seq=4 ttl=64 time=0.449 ms\r\n84 bytes from 10.10.10.6 icmp_seq=5 ttl=64 time=0.409 ms\r\n\r\n\rvpc-a> ",
+  "tail2": "ping 10.10.10.7\r\n\r\nhost (10.10.10.7) not reachable\r\n\r\n\rvpc-a> "
+}

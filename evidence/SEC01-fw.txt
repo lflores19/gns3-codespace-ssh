@@ -1,0 +1,11 @@
+SEC01 — firewall FW01–FW06 representative matrix and IPv6 bypass
+UTC: 2026-09-26T18:08:47Z
+fw1 nft table ip filter forward policy drop; table ip6 filter forward policy drop with explicit counter drop. Counter-only observation rules precede original IPv4 accept/drop rules; counters count packets, not test cases.
+FW01 Sales VLAN10 pc-a10 → web1 172.16.0.20 TCP/80: 3/3 VPCS Connect, counter 18 packets; allowed.
+FW02 Admin VLAN20 admin-vm → web1 TCP/445: nc -z exit0, prior SMB auth positive; counter 4 packets; allowed.
+FW03 Guest VLAN40 pc-inv40 → web1 TCP/80: 3/3 VPCS Connect (one close timeout after connection); counter 20 packets; allowed web-only.
+FW04 Guest pc-inv40 → LAN admin-vm 192.168.20.140: 0/3 ICMP; counter 3 drop; allowed pc-admin20→same host 3/3. Guest→web1 TCP/445: 3/3 timeouts, counter 9 drop; allowed admin-vm→same service nc rc0.
+FW05 WireGuard peer 10.50.0.2 → inventory app 172.16.0.21:5000: GET /items returned persisted id1, counter 12 packets accept; VPN peer→management denied, counter 3 drop.
+FW06 Admin VLAN20 → management pc-mgmt99 192.168.99.2: 3/3 ICMP, counter 3 packets allowed; guest→same target 0/3, counter 3 drop.
+IPv6 bypass: evidence/SEC01-ipv6.txt documents temporary ULA routed test with healthy controls; admin→web1 0/3 ICMPv6 despite temporary forwarding=1; ip6 forward counter 3 drop. Temporary ULA and route removed, forwarding restored=0. Persistent ip6 default-drop guard remains in config/firewall/fw.nft.
+Scope: representative flows per FW rule and selected source/destination pairs, not exhaustive every port of every policy; observed counters include TCP retransmissions. Result: PASS for firewall matrix representative tests and IPv6 bypass protection under tested topology.

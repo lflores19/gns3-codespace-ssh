@@ -1,0 +1,30 @@
+{
+  "observed_utc": "2026-09-26T04:05:58Z",
+  "project_id": "e792c7b3-8a50-4d0b-a93a-ab64e7e6e344",
+  "fw1_gateways": {
+    "10": "192.168.10.1/24",
+    "20": "192.168.20.1/24",
+    "40": "192.168.40.1/24",
+    "99": "192.168.99.1/24",
+    "200": "172.16.0.1/24",
+    "300": "10.20.30.1/24"
+  },
+  "pc_dmz_to_pc_a10_cross_vlan_routed": {
+    "ok": true,
+    "replies": 5
+  },
+  "pc_a10_to_pc_dmz_reverse": {
+    "ok": true,
+    "replies": 5
+  },
+  "vlan10_intra_trunk_control": {
+    "ok": true,
+    "replies": 5
+  },
+  "raw": {
+    "dmz_to_v10": "om 192.168.10.2 icmp_seq=2 ttl=63 time=1.067 ms\r\n84 bytes from 192.168.10.2 icmp_seq=3 ttl=63 time=1.113 ms\r\n84 bytes from 192.168.10.2 icmp_seq=4 ttl=63 time=0.918 ms\r\n84 bytes from 192.168.10.2 icmp_seq=5 ttl=63 time=0.908 ms\r\n\r\n\rpc-dmz> ",
+    "v10_to_dmz": "s from 172.16.0.50 icmp_seq=2 ttl=63 time=0.981 ms\r\n84 bytes from 172.16.0.50 icmp_seq=3 ttl=63 time=0.931 ms\r\n84 bytes from 172.16.0.50 icmp_seq=4 ttl=63 time=0.917 ms\r\n84 bytes from 172.16.0.50 icmp_seq=5 ttl=63 time=1.096 ms\r\n\r\n\rpc-a10> ",
+    "v10_intra": ".336 ms\r\n84 bytes from 192.168.10.3 icmp_seq=3 ttl=64 time=0.354 ms\r\n84 bytes from 192.168.10.3 icmp_seq=4 ttl=64 time=0.349 ms\r\n84 bytes from 192.168.10.3 icmp_seq=5 ttl=64 time=0.358 ms\r\n\r\n\rpc-a10> "
+  },
+  "passed": true
+}

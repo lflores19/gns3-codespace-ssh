@@ -1,0 +1,12 @@
+{
+  "observed_utc": "2026-09-26T04:17:43Z",
+  "node": "fw1",
+  "installed": [
+    "nftables 1.1.3",
+    "dnsmasq 2.91 (12 pkgs total)"
+  ],
+  "method": "standalone QEMU boot of fw1 overlay with -nic user (slirp internet); apk add via dl-cdn",
+  "nft_rules": "/etc/nftables/fw.nft (matriz FW01-FW06 simplificada)",
+  "dnsmasq": "DHCP v10/20/40 + DNS web1.lab.local",
+  "transcript_tail": "bles/fw.nft 2>&1; echo NFT_RC=$?\r\nNFT_RC=0\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6nrc-update add local default 2>/dev/null\r\n \u001b[1m\u001b[32m*\u001b[m rc-update: local already installed in runlevel `default'; skipping\u001b[K\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6nsync\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6npoweroff\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6necho POWERING_OFF\r\nPOWERING_OFF\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6n"
+}

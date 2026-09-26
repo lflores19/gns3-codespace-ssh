@@ -1,0 +1,10 @@
+{
+  "web1": {
+    "interfaces": true,
+    "samba": true,
+    "shares": true,
+    "http": true
+  },
+  "before_file": "web1-before-snapshot.txt",
+  "after_file": "web1-after-snapshot.txt"
+}

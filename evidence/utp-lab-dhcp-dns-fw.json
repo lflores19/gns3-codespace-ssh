@@ -1,0 +1,26 @@
+{
+  "observed_utc": "2026-09-26T04:29:21Z",
+  "project_id": "e792c7b3-8a50-4d0b-a93a-ab64e7e6e344",
+  "dns_resolution_and_ping_web1.lab.local": {
+    "ok": true
+  },
+  "dhcp_v10_validated_earlier": true,
+  "dhcp_v40_validated_earlier": true,
+  "icmp_ventas_to_dmz_web1": {
+    "ok": true,
+    "replies": 5
+  },
+  "fw04_invitados_to_ventas_blocked": {
+    "ok": true
+  },
+  "fw03_invitados_icmp_to_dmz_blocked_tcp_only": {
+    "ok": true
+  },
+  "raw": {
+    "dns_ping_web1": "e=11.032 ms\r\n84 bytes from 172.16.0.20 icmp_seq=2 ttl=63 time=2.867 ms\r\n84 bytes from 172.16.0.20 icmp_seq=3 ttl=63 time=1.761 ms\r\n84 bytes from 172.16.0.20 icmp_seq=4 ttl=63 time=1.808 ms\r\n84 bytes from 172.16.0.20 icmp_seq=5 ttl=63 time=1.852 ms\r\n\r\n\rpc-a10> ",
+    "ping_dmz": "me=1.711 ms\r\n84 bytes from 172.16.0.20 icmp_seq=2 ttl=63 time=1.761 ms\r\n84 bytes from 172.16.0.20 icmp_seq=3 ttl=63 time=1.908 ms\r\n84 bytes from 172.16.0.20 icmp_seq=4 ttl=63 time=1.783 ms\r\n84 bytes from 172.16.0.20 icmp_seq=5 ttl=63 time=1.970 ms\r\n\r\n\rpc-a10> ",
+    "inv40_to_v10": "pc-inv40> \r\n\rpc-inv40> \r\n\rpc-inv40> \r\n\rpc-inv40> ping 192.168.10.100\r\n\r\n192.168.10.100 icmp_seq=1 timeout\r\n192.168.10.100 icmp_seq=2 timeout\r\n192.168.10.100 icmp_seq=3 timeout\r\n192.168.10.100 icmp_seq=4 timeout\r\n192.168.10.100 icmp_seq=5 timeout\r\n\r\n\rpc-inv40> ",
+    "inv40_to_dmz_web1_icmp": "\r\n\rpc-inv40> \r\n\rpc-inv40> \r\n\rpc-inv40> ping 172.16.0.20\r\n\r\n172.16.0.20 icmp_seq=1 timeout\r\n172.16.0.20 icmp_seq=2 timeout\r\n172.16.0.20 icmp_seq=3 timeout\r\n172.16.0.20 icmp_seq=4 timeout\r\n172.16.0.20 icmp_seq=5 timeout\r\n\r\n\rpc-inv40> "
+  },
+  "passed": true
+}

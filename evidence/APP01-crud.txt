@@ -1,0 +1,11 @@
+APP01 — inventory create/read and persistence
+Scope: GNS3 client1 app at 172.16.0.21:5000, PostgreSQL 16 on mon1 172.16.0.30:5432
+Creation: POST /items {"name":"asset-20260926-1705"} -> 201 {"id":1,"name":"asset-20260926-1705"} observed before this run.
+2026-09-26T17:04:28Z before restart: GET /items -> id=1,name=asset-20260926-1705 PASS
+2026-09-26T17:04:36Z db1-on-mon1: SELECT id,name FROM items -> 1|asset-20260926-1705 PASS
+2026-09-26T17:04:42Z mon1 API stop/start: HTTP 200/200
+2026-09-26T17:06:02Z after mon1 restart: GET /items -> id=1,name=asset-20260926-1705 PASS
+2026-09-26T17:06:07Z client1 API stop/start: HTTP 200/200
+2026-09-26T17:07:32Z after client1 restart: GET /items -> id=1,name=asset-20260926-1705 PASS
+Result: PASS; item persisted in PostgreSQL after DB host and app host restarts.
+Credentials excluded.

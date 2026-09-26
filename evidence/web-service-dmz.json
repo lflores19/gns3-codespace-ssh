@@ -1,0 +1,11 @@
+{
+  "observed_utc": "2026-09-26T03:37:53Z",
+  "service": "busybox nc one-shot HTTP responder en web1:80 (el busybox de alpine-virt NO incluye applet httpd: \"applet not found\"; evidencia previa de httpd era un falso positivo y fue descartada)",
+  "autostart": "/etc/local.d/httpd.start -> nohup sh /root/httpd-loop.sh; rc-update add local default",
+  "tests": {
+    "web1_autostart_listen_after_api_reboot": "ok (:80 LISTEN tras stop/start)",
+    "client1_get_to_web1_172_16_0_20": "ok"
+  },
+  "marker": "web1 utp-network-lab OK",
+  "transcript_tail": "\r\n\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6nwget -O- http://172.16.0.20/ 2>&1\r\nConnecting to 172.16.0.20 (172.16.0.20:80)\r\nwriting to stdout\r\nweb1 utp-network-lab OK\r\n\r-                    100% |********************************|    24  0:00:00 ETA\r\nwritten to stdout\r\nalpine-gns3:~# \r\nalpine-gns3:~# \u001b[6n"
+}

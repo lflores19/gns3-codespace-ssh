@@ -1,0 +1,74 @@
+cat /tmp/t1 /tmp/t2 /tmp/t3 /tmp/t4 /tmp/t5 /tmp
+/t6; echo SCAN_END
+SCAN_START
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	general         Disk      
+	ventas          Disk      
+	IPC$            IPC       IPC Service (web1 utp-lab)
+SMB1 disabled -- no workgroup available
+RC=0
+putting file /etc/motd as \rerun_admin1.txt (10.7 kb/s) (average 10.7 kb/s)
+RC=0
+  .                                   D        0  Sat Sep 26 05:27:27 2026
+  ..                                  D        0  Sat Sep 26 05:27:27 2026
+  test_admin1.txt                     A       12  Sat Sep 26 05:23:40 2026
+  rerun_admin1.txt                    A      284  Sat Sep 26 05:27:27 2026
+
+		1722768 blocks of size 1024. 1500520 blocks available
+RC=0
+tree connect failed: NT_STATUS_ACCESS_DENIED
+RC=1
+putting file /etc/motd as \rerun_v.txt (11.6 kb/s) (average 11.6 kb/s)
+  .                                   D        0  Sat Sep 26 05:28:44 2026
+  ..                                  D        0  Sat Sep 26 05:28:44 2026
+  rerun_v.txt                         A      284  Sat Sep 26 05:28:44 2026
+  test_ventas1.txt                    A       12  Sat Sep 26 05:24:31 2026
+
+		1722768 blocks of size 1024. 1500516 blocks available
+RC=0
+    inet 192.168.20.140/24 brd 192.168.20.255 scope global eth0
+    inet6 fe80::e9e:ccff:fe1e:0/64 scope link 
+default via 192.168.20.1 dev eth0  metric 202 
+192.168.20.0/24 dev eth0 scope link  src 192.168.20.140 
+SCAN_END
+alpine-gns3:~# 
+alpine-gns3:~# 
+alpine-gns3:~# 
+alpine-gns3:~# 
+alpine-gns3:~# 
+alpine-gns3:~# [6ncat /tmp/t1 /tmp/t2 /tmp/t3 /tmp/t4 /tmp/t5 /tmp/t6; echo SCAN_EN
+D
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	general         Disk      
+	ventas          Disk      
+	IPC$            IPC       IPC Service (web1 utp-lab)
+SMB1 disabled -- no workgroup available
+RC=0
+putting file /etc/motd as \rerun_admin1.txt (10.7 kb/s) (average 10.7 kb/s)
+RC=0
+  .                                   D        0  Sat Sep 26 05:27:27 2026
+  ..                                  D        0  Sat Sep 26 05:27:27 2026
+  test_admin1.txt                     A       12  Sat Sep 26 05:23:40 2026
+  rerun_admin1.txt                    A      284  Sat Sep 26 05:27:27 2026
+
+		1722768 blocks of size 1024. 1500520 blocks available
+RC=0
+tree connect failed: NT_STATUS_ACCESS_DENIED
+RC=1
+putting file /etc/motd as \rerun_v.txt (11.6 kb/s) (average 11.6 kb/s)
+  .                                   D        0  Sat Sep 26 05:28:44 2026
+  ..                                  D        0  Sat Sep 26 05:28:44 2026
+  rerun_v.txt                         A      284  Sat Sep 26 05:28:44 2026
+  test_ventas1.txt                    A       12  Sat Sep 26 05:24:31 2026
+
+		1722768 blocks of size 1024. 1500516 blocks available
+RC=0
+    inet 192.168.20.140/24 brd 192.168.20.255 scope global eth0
+    inet6 fe80::e9e:ccff:fe1e:0/64 scope link 
+default via 192.168.20.1 dev eth0  metric 202 
+192.168.20.0/24 dev eth0 scope link  src 192.168.20.140 
+SCAN_END

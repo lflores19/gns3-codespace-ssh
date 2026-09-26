@@ -1,0 +1,66 @@
+RS_START
+RS_START
+alpine-gns3:~# 
+alpine-gns3:~# [6nnft list ruleset
+table ip filter {
+	chain input {
+		type filter hook input priority filter; policy accept;
+	}
+
+	chain forward {
+		type filter hook forward priority filter; policy drop;
+		ct state established,related accept
+		ip saddr 192.168.10.0/24 ip daddr 172.16.0.20 tcp dport { 80, 443 } accept
+		ip saddr 192.168.20.0/24 ip daddr 172.16.0.0/24 tcp dport { 22, 80, 443, 445, 5432 } accept
+		ip saddr 192.168.40.0/24 ip daddr 172.16.0.20 tcp dport { 80, 443 } accept
+		ip saddr 10.20.30.128/25 ip daddr 172.16.0.21 tcp dport 5000 accept
+		ip saddr 192.168.40.0/24 ip daddr { 192.168.10.0/24, 192.168.20.0/24, 192.168.99.0/24 } drop
+		ip daddr 192.168.99.0/24 ip saddr != 192.168.20.0/24 drop
+		ip saddr 192.168.10.0/24 ip daddr 172.16.0.0/24 icmp type echo-request accept
+		ip saddr 172.16.0.0/24 ip daddr 192.168.10.0/24 icmp type echo-reply accept
+		ct state established,related accept
+		ip saddr 192.168.10.0/24 ip daddr 172.16.0.20 tcp dport { 80, 443 } accept
+		ip saddr 192.168.20.0/24 ip daddr 172.16.0.0/24 tcp dport { 22, 80, 443, 445, 5432 } accept
+		ip saddr 192.168.40.0/24 ip daddr 172.16.0.20 tcp dport { 80, 443 } accept
+		ip saddr 10.20.30.128/25 ip daddr 172.16.0.21 tcp dport 5000 accept
+		ip saddr 192.168.40.0/24 ip daddr { 192.168.10.0/24, 192.168.20.0/24, 192.168.99.0/24 } drop
+		ip daddr 192.168.99.0/24 ip saddr != 192.168.20.0/24 drop
+		ip saddr 192.168.10.0/24 ip daddr 172.16.0.0/24 icmp type echo-request accept
+		ip saddr 172.16.0.0/24 ip daddr 192.168.10.0/24 icmp type echo-reply accept
+	}
+
+	chain output {
+		type filter hook output priority filter; policy accept;
+	}
+}
+alpine-gns3:~# 
+alpine-gns3:~# [6necho RS_MID
+RS_MID
+alpine-gns3:~# 
+alpine-gns3:~# [6ncat /etc/dnsmasq.d/lab.conf
+# DNS local del lab (sin forwarders externos en esta fase)
+no-resolv
+no-hosts
+domain=lab.local
+local=/lab.local/
+address=/web1.lab.local/172.16.0.20
+address=/fw1.lab.local/172.16.0.1
+# DHCP por VLAN (rangos del diseno lab.yaml)
+dhcp-range=set:v10,192.168.10.100,192.168.10.159,255.255.255.0,12h
+dhcp-range=set:v20,192.168.20.100,192.168.20.159,255.255.255.0,12h
+dhcp-range=set:v40,192.168.40.100,192.168.40.159,255.255.255.0,12h
+dhcp-option=tag:v10,3,192.168.10.1
+dhcp-option=tag:v10,6,192.168.10.1
+dhcp-option=tag:v20,3,192.168.20.1
+dhcp-option=tag:v20,6,192.168.20.1
+dhcp-option=tag:v40,3,192.168.40.1
+dhcp-option=tag:v40,6,192.168.40.1
+interface=eth0.10
+interface=eth0.20
+interface=eth0.40
+bind-interfaces
+log-dhcp
+log-queries
+alpine-gns3:~# 
+alpine-gns3:~# [6necho RS_END
+RS_END

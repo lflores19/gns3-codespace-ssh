@@ -1,0 +1,18 @@
+{
+  "observed_utc": "2026-09-26T02:50:11Z",
+  "project_id": "e792c7b3-8a50-4d0b-a93a-ab64e7e6e344",
+  "vlan10_trunk": {
+    "replies": 5,
+    "ok": true
+  },
+  "dmz_to_web1": {
+    "replies": 5,
+    "ok": true
+  },
+  "cross_subnet_note": "ping 192.168.10.2\r\n\r\nNo gateway found\r\n\r\n\rpc-dmz> ",
+  "raw": {
+    "pc_a10_to_pc_d10_vlan10_across_trunk": ".309 ms\r\n84 bytes from 192.168.10.3 icmp_seq=2 ttl=64 time=0.354 ms\r\n84 bytes from 192.168.10.3 icmp_seq=3 ttl=64 time=0.372 ms\r\n84 bytes from 192.168.10.3 icmp_seq=4 ttl=64 time=0.351 ms\r\n84 bytes from 192.168.10.3 icmp_seq=5 ttl=64 time=0.350 ms\r\n\r\n\rpc-a10> ",
+    "pc_dmz_to_web1_vlan200": "me=4.652 ms\r\n84 bytes from 172.16.0.20 icmp_seq=2 ttl=64 time=1.071 ms\r\n84 bytes from 172.16.0.20 icmp_seq=3 ttl=64 time=0.901 ms\r\n84 bytes from 172.16.0.20 icmp_seq=4 ttl=64 time=0.819 ms\r\n84 bytes from 172.16.0.20 icmp_seq=5 ttl=64 time=1.060 ms\r\n\r\n\rpc-dmz> ",
+    "pc_dmz_to_pc_a10_cross_vlan_same_untestable": "ping 192.168.10.2\r\n\r\nNo gateway found\r\n\r\n\rpc-dmz> "
+  }
+}

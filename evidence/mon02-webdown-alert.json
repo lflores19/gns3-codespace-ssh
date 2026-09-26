@@ -1,0 +1,25 @@
+{
+  "observed_utc": "2026-09-26T13:28:21Z",
+  "requirement": "MON02",
+  "monitoring_stack": "Prometheus 2.53.4 + blackbox-exporter 0.26 en mon1 (172.16.0.30, DMZ); Grafana 12.0.0 dashboard uid c69790a9-f790-4f08-a10c-810389e3156a",
+  "scenario": "kill del responder HTTP (pkill httpd-loop/nc) en web1 (172.16.0.20)",
+  "timeline": {
+    "T_kill": "2026-09-26T13:21:13Z",
+    "alert_activeAt": "2026-09-26T13:21:27.618Z (Web1Down pending; for:20s da firing ~13:21:47)",
+    "first_failed_probe": "13:21:35Z (probe_success=0; epoch 1790428895)",
+    "T_restore": "2026-09-26T13:24:12Z (sh /etc/local.d/httpd.start)",
+    "first_ok_probe": "13:24:35Z (probe_success=1; epoch 1790429075)",
+    "T_confirm_quiet": "2026-09-26T13:26:08Z (alerts empty, probe_success=1)"
+  },
+  "latencies": {
+    "deteccion_s": 22,
+    "alerta_for_s": 20,
+    "recuperacion_s": 23,
+    "duracion_total_interrupcion_s": 180
+  },
+  "evidence_files": [
+    "mon02-probe-timeline.json",
+    "mon01-queries.txt"
+  ],
+  "status": "PASS"
+}

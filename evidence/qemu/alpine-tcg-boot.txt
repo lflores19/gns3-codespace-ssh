@@ -1,0 +1,8 @@
+
+ISOLINUX 6.04 6.04-pre1  Copyright (C) 1994-2015 H. Peter Anvin et al
+boot: 
+
+Welcome to Alpine Linux 3.22
+Kernel 6.12.110-0-virt on x86_64 (/dev/ttyS0)
+
+localhost login: qemu-system-x86_64: terminating on signal 15 from pid 5834 (timeout)

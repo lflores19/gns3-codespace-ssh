@@ -1,5 +1,9 @@
 .env
 *.pcap
+!evidence/vlan-trunk.pcap
+!evidence/NET02-fw1-trunk.pcap
+!evidence/IDS01-mirror.pcap
+!evidence/IDS01-reboot.pcap
 *.log
 __pycache__/
 .gns3_backup/

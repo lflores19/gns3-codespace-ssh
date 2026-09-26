@@ -1,0 +1,11 @@
+{
+  "observed_utc": "2026-09-26T02:19:20Z",
+  "project_id": "4faff441-825b-4429-aa4e-210f8aeda0e1",
+  "scenario2": "same L3 subnet 10.10.10.0/24, different access VLANs (a VLAN10, b VLAN20 10.10.10.5)",
+  "control_intra_vlan_ping_a_to_c_success": true,
+  "cross_vlan_same_subnet_replies": 0,
+  "cross_vlan_isolated": true,
+  "passed": true,
+  "raw_cross_tail": "ping 10.10.10.5\r\n\r\nhost (10.10.10.5) not reachable\r\n\r\n\rvpc-a> ",
+  "raw_control_tail": " time=0.317 ms\r\n84 bytes from 10.10.10.3 icmp_seq=3 ttl=64 time=0.325 ms\r\n84 bytes from 10.10.10.3 icmp_seq=4 ttl=64 time=0.348 ms\r\n84 bytes from 10.10.10.3 icmp_seq=5 ttl=64 time=0.331 ms\r\n\r\n\rvpc-a> "
+}

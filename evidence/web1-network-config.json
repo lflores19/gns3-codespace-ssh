@@ -1,0 +1,7 @@
+{
+  "observed_utc": "2026-09-26T02:48:49Z",
+  "node": "web1",
+  "console_port": 5020,
+  "eth0": "172.16.0.20/24 static, persisted in /etc/network/interfaces",
+  "config_echoed": true
+}

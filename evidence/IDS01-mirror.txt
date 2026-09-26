@@ -1,0 +1,8 @@
+IDS01 — software traffic mirror, independent mirror0 capture, correlated EVE alert
+UTC test: 2026-09-26T18:42:04.146178+0000
+Source path: fw1 eth0 dot1q trunk -> tc clsact ingress matchall mirred egress mirror dev mirror0 (dummy interface). Original packet path remains active; action statistics at capture: Sent 22784 bytes, 303 packets, dropped 0.
+Suricata second capture on mirror0 with /etc/suricata/mirror.yaml, eve-log + pcap-log; original Suricata on eth0 remains running. Sensor shares fw1 guest and is NOT an independent security VM or a switch SPAN port.
+Authorized test: admin-vm VLAN20 192.168.20.140 ran nc -z -w3 172.16.0.20 445 -> RC=0 (service healthy and policy allowed).
+EVE alert: evidence/IDS01-eve.json has in_iface=mirror0, event_type=alert, vlan=[20], src/dst/port matched, alert.action=allowed, gid=1, signature_id=1000002 (LAB SMB connection attempt).
+Mirror capture: evidence/IDS01-mirror.pcap, 24157 bytes, SHA256 53e6dc340c44b3b53743c1e1e2c51018fc62f36a2f50ea9baa385000595eead0; tcpdump filtered vlan20 src=192.168.20.140 dst=172.16.0.20 dport445 matched 4 packet(s) including EVE source port 42541.
+Scope: one tested authorized flow on a local software mirror, not coverage of same-VLAN off-router traffic. The startup script was subsequently installed and validated by a real fw1 reboot; see evidence/IDS01-reboot.txt and evidence/IDS01-reboot.pcap.

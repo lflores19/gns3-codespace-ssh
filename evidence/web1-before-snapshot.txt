@@ -1,0 +1,42 @@
+OPS01_MARKER_START
+alpine-gns3:~# alpine-gns3:~# auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+  address 172.16.0.20/24
+  gateway 172.16.0.1
+alpine-gns3:~# alpine-gns3:~# # Global parameters
+[global]
+	server string = web1 utp-lab
+	idmap config * : backend = tdb
+
+
+[general]
+	path = /srv/share/general
+	read only = No
+	valid users = @admins
+
+
+[ventas]
+	path = /srv/share/ventas
+	read only = No
+	valid users = @admins @ventas
+alpine-gns3:~# alpine-gns3:~# /srv/share/general:
+total 16
+drwxrws---    2 root     admins        4096 Sep 26 05:27 [1;34m.[m
+drwxr-xr-x    4 root     root          4096 Sep 26 05:08 [1;34m..[m
+-rwxr--r--    1 admin1   admins         284 Sep 26 05:27 [1;32mrerun_admin1.txt[m
+-rwxr--r--    1 admin1   admins          12 Sep 26 05:23 [1;32mtest_admin1.txt[m
+
+/srv/share/ventas:
+total 16
+drwxrws---    2 root     ventas        4096 Sep 26 05:28 [1;34m.[m
+drwxr-xr-x    4 root     root          4096 Sep 26 05:08 [1;34m..[m
+-rwxr--r--    1 ventas1  ventas         284 Sep 26 05:28 [1;32mrerun_v.txt[m
+-rwxr--r--    1 ventas1  ventas          12 Sep 26 05:24 [1;32mtest_ventas1.txt[m
+alpine-gns3:~# alpine-gns3:~# 8b38657ee228e5abe1f6fe174f506664f1e71bcc1d62c3980c271712285eca8d  /srv/share/general/test_admin1.txt
+8b38657ee228e5abe1f6fe174f506664f1e71bcc1d62c3980c271712285eca8d  /srv/share/ventas/test_ventas1.txt
+alpine-gns3:~# alpine-gns3:~# web1 utp-network-lab OK
+alpine-gns3:~# alpine-gns3:~# alpine-gns3:~# alpine-gns3:~# OPS01_MARKER_BEFORE_DONE
+alpin

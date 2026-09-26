@@ -1,0 +1,13 @@
+{
+  "observed_utc": "2026-09-26T05:28:56Z",
+  "checks": {
+    "admin_share_list": true,
+    "admin1_put_general": true,
+    "admin1_ls_general_shows_files": true,
+    "ventas1_general_access_denied": true,
+    "ventas1_put_ventas": true,
+    "dhcp_vlan20": true
+  },
+  "passed": true,
+  "raw_file": "evidence/smb-tests.txt"
+}

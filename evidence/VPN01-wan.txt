@@ -1,0 +1,6 @@
+VPN01 — WAN WireGuard permitted and denied access
+UTC evidence finalized: 2026-09-26T17:47:46Z
+Peer wan-vpn 10.20.30.60/24, wg0 10.50.0.2/24; fw1 wg0 10.50.0.1/24. Handshake and transfer counters active.
+Positive: wan-vpn ping to web1 172.16.0.20 via wg0: 3/3 replies. HTTP GET to app 172.16.0.21:5000/items returned [{"id":1,"name":"asset-20260926-1705"}] and HTTP_RC=0. fw1 nft counters at final read: web1 ICMP accept 3 packets; app TCP/5000 accept 6 packets.
+Denied target healthy: admin-vm VLAN20 ping to pc-mgmt99 192.168.99.2: 3/3 replies. Negative: temporary peer AllowedIPs + route via wg0 to management /24, route get confirmed source 10.50.0.2; ping -I wg0 192.168.99.2: 0/3 replies. fw1 explicit wg0→management nft counter 0→3 drop. Temporary route and runtime AllowedIPs extension removed; original peer AllowedIPs restored.
+Result: PASS — handshake, IP/routing, permitted access and denied management access observed; client config unchanged.
