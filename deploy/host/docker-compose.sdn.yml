@@ -1,0 +1,37 @@
+name: utp-lab-sdn
+
+networks:
+  oob:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.29.250.0/24
+          gateway: 172.29.250.1
+
+services:
+  controller:
+    build: ../../controller
+    container_name: lab-ctrl1
+    networks:
+      oob: { ipv4_address: 172.29.250.10 }
+    ports:
+      - "127.0.0.1:6653:6653"
+    restart: unless-stopped
+
+  sw1:
+    build: ../../docker/ovs
+    container_name: lab-ovs-sw1
+    privileged: true
+    networks:
+      oob: { ipv4_address: 172.29.250.11 }
+    depends_on: [ controller ]
+    restart: unless-stopped
+
+  sw2:
+    build: ../../docker/ovs
+    container_name: lab-ovs-sw2
+    privileged: true
+    networks:
+      oob: { ipv4_address: 172.29.250.12 }
+    depends_on: [ controller ]
+    restart: unless-stopped
