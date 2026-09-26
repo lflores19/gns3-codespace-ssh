@@ -10,5 +10,10 @@ sudo apt-get install -y --no-install-recommends \
 pip3 install --no-cache-dir ryu gns3fy pyyaml "gns3-server==2.2.55"
 
 sudo apt-get install -y --no-install-recommends dynamips vpcs ubridge qemu-system-x86 telnet || true
-sudo mkdir -p /var/run/openvswitch
+
+# Codespaces removes CAP_NET_ADMIN from the bounding set. Copy without file
+# capabilities so uBridge can use its supported unprivileged UDP transport.
+install -Dm755 /usr/bin/ubridge /home/vscode/.local/bin/ubridge-uncap
+install -Dm755 /usr/bin/dynamips /home/vscode/.local/bin/dynamips-uncap
+
 echo "setup done"

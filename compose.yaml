@@ -6,7 +6,7 @@ services:
   db1:
     image: postgres:16-alpine
     environment:
-      POSTGRES_PASSWORD: ${DB_PASS:-changeme}
+      POSTGRES_PASSWORD: ${DB_PASS:?DB_PASS must be set and non-empty}
       POSTGRES_DB: inventario
     volumes: [dbdata:/var/lib/postgresql/data]
     networks: [dmz]

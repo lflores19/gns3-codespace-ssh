@@ -1,0 +1,36 @@
+#!/bin/sh
+# Alpine local service: mirror fw1 eth0 ingress traffic to Suricata on mirror0.
+
+set -eu
+
+PIDFILE=/run/suricata-mirror.pid
+LOGDIR=/var/log/suricata/mirror
+
+modprobe dummy
+
+if ! ip link show dev mirror0 >/dev/null 2>&1; then
+    ip link add mirror0 type dummy
+fi
+ip link set dev mirror0 up
+
+if ! tc qdisc show dev eth0 | grep -q 'clsact'; then
+    tc qdisc add dev eth0 clsact
+fi
+
+if ! tc filter show dev eth0 ingress | awk '
+    /^filter protocol all .* matchall/ { candidate = 1; next }
+    candidate && /mirred .*Mirror to device mirror0/ { found = 1 }
+    /^filter / { candidate = 0 }
+    END { exit !found }
+'; then
+    tc filter add dev eth0 ingress protocol all matchall action mirred egress mirror dev mirror0
+fi
+
+mkdir -p "$LOGDIR"
+
+if [ -r "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+    exit 0
+fi
+
+suricata -c /etc/suricata/mirror.yaml -i mirror0 -D \
+    --pidfile "$PIDFILE" -l "$LOGDIR"

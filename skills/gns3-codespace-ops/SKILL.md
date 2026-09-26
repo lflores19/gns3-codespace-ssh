@@ -67,8 +67,10 @@ When the Codespace is shared, the URL is public, or `3080` is exposed via Port F
    
    # Auth settings
    user = admin
-   password = secure_hub_password_2026
+   password = <SET_A_UNIQUE_SECRET_OUTSIDE_THE_REPOSITORY>
    ```
+> Never commit credentials; set a unique secret outside the repository.
+
 2. **Restart the daemon**: `pkill -f gns3server; nohup gns3server --config /home/vscode/.config/GNS3/2.2/gns3_server.conf > /tmp/gns3server.log 2>&1 &`
 3. **Remote Clients**: Connect GNS3 GUI to `http://127.0.0.1:3080` using Basic Auth, or bind HTTP to codespace's proxy via `gh codespace ports visibility 3080:private`.
 
@@ -76,7 +78,8 @@ When the Codespace is shared, the URL is public, or `3080` is exposed via Port F
 
 | Symptom | Cause | Solution |
 | --- | --- | --- |
-| `Permission denied on /usr/bin/ubridge` | Missing Linux capabilities | Run `sudo setcap cap_net_admin,cap_net_raw=ep /usr/bin/ubridge` |
+| `Permission denied on /usr/bin/ubridge` | Missing Linux capabilities | Codespaces lacks CAP_NET_ADMIN in the bounding set, so `setcap` on the shipped binary does NOT help. GNS3 runs as `vscode` (no exec right on group-only ubridge anyway). Use an uncap copy: `install -Dm755 /usr/bin/ubridge ~/.local/bin/ubridge-uncap` and set `ubridge_path` under `[Server]` in gns3_server.conf. Enables QEMU/VPCS UDP links only — TAP/OVS bridging stays unavailable. |
+| `[Errno 1] Operation not permitted: '/usr/bin/dynamips'` when creating an Ethernet switch node | `/usr/bin/dynamips` carries `cap_net_admin,cap_net_raw=ep` | Same uncap cure: `install -Dm755 /usr/bin/dynamips ~/.local/bin/dynamips-uncap` and set `dynamips_path` under `[Dynamips]` in gns3_server.conf, then restart gns3server. |
 | `Cannot connect to 127.0.0.1:3080` | Port forward inactive or daemon down | Re-run `gh codespace ports forward` and verify `ps aux \| grep gns3server` |
 | `Console connection refused on port 5000` | Node not started or port outside range | Check `gns3_server.conf` has `allow_remote_console = True` and start the node via API/GUI. |
 | `CPU at 100% on router boot` | Dynamips Idle-PC not calculated | In GNS3 GUI, right-click router -> **Idle-PC** calculation to stabilize CPU usage. |
