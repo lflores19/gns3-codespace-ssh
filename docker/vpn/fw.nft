@@ -1,11 +1,7 @@
 #!/usr/sbin/nft -f
-# Matriz SEC01 completa (FW01-FW06) — etapa 6 host local.
-# Base: políticas del lab Codespace (config/firewall/fw.nft validado SEC01 PASS)
-# re-escritas para el plano Docker local según matriz §7 del prompt:
-#   Adm(10)->*, Ventas(20)->servidores(30) solo servicios, Invitados(40)->solo Internet/NAT,
-#   Gestión(99)->todo administrativo, DMZ expone 443 y SMB cumplido.
-# Criterio de cierre: counters en cada regla + pruebas positivas/negativas registrables
-# (verify-stage6.sh).
+# Matriz firewall — spec "Comercial Andina" §8 (políticas de intención implementables).
+# Reglas con counters para medir. PASS solo cuando el contador sube en test positivos
+# y queda quieto en negativos. Base previa validada en Codespace (SEC01 PASS).
 
 flush ruleset
 
@@ -16,8 +12,14 @@ table ip filter {
         ct state established,related accept
         iifname "lo" accept
         ip protocol icmp accept comment "icmp-gestion"
-        # FW03: OpenVPN solo desde WAN y solo TCP/1194
-        iifname "wan" tcp dport 1194 counter accept comment "openvpn-wan"
+        # OpenVPN aún en standby: habilitamos WireGuard UDP 51820 desde WAN (spec §6).
+        # Cuando se use OpenVPN en su lugar, se añade tcp 1194 y se retira esta.
+        iifname "wan" udp dport 51820 counter accept comment "wireguard-wan"
+        # DHCP relay del firewall escucha en las VLAN cliente (UDP 67 desde interno)
+        iifname "eth1.*" udp dport 67 counter accept comment "dhcp-relay"
+        # DNS en el propio firewall solo para VLAN40 (spec: guest DNS = 10.10.40.1)
+        iifname "eth1.40" udp dport 53 counter accept comment "dns-guest"
+        iifname "eth1.40" tcp dport 53 counter accept comment "dns-guest-tcp"
         counter drop comment "input-drop"
     }
 
@@ -25,38 +27,49 @@ table ip filter {
         type filter hook forward priority 0; policy drop;
         ct state established,related accept
 
-        # FW01: Adm (10) accede a servidores (30) y gestión (99)
-        ip saddr 10.10.10.0/24 ip daddr 10.10.30.0/24 counter accept comment "adm-to-srv"
-        ip saddr 10.10.10.0/24 ip daddr 10.10.99.0/24 counter accept comment "adm-to-mgmt"
+        # DNS interno a INFRA01 desde VLANs cliente autorizadas (10/20/50)
+        ip saddr { 10.10.10.0/24, 10.10.20.0/24, 10.10.50.0/24 } ip daddr 10.10.30.10 udp dport 53 counter accept comment "corp-dns"
+        ip saddr { 10.10.10.0/24, 10.10.20.0/24, 10.10.50.0/24 } ip daddr 10.10.30.10 tcp dport 53 counter accept comment "corp-dns-tcp"
 
-        # FW02: Ventas (20) solo servicios concretos en servidores: web 443, smb 445, dns 53
-        ip saddr 10.10.20.0/24 ip daddr 10.10.30.0/24 tcp dport {443, 445} counter accept comment "ventas-srv-443-445"
-        ip saddr 10.10.20.0/24 ip daddr 10.10.30.11 udp dport 53 counter accept comment "ventas-dns"
-        ip saddr 10.10.20.0/24 ip daddr 10.10.30.11 tcp dport 53 counter accept comment "ventas-dns-tcp"
-        ip saddr 10.10.20.0/24 ip daddr 10.10.30.0/24 counter drop comment "ventas-srv-otros-drop"
+        # Intranet HTTPS solo hacia WEB01 (10.10.30.20)
+        ip saddr { 10.10.10.0/24, 10.10.20.0/24, 10.10.50.0/24 } ip daddr 10.10.30.20 tcp dport 443 counter accept comment "corp-web-https"
 
-        # FW04: Invitados (40) bloqueado a toda la red interna, solo NAT/Internet
-        ip saddr 10.10.40.0/24 ip daddr 10.10.0.0/16 counter drop comment "inv-a-lan-drop"
-        ip saddr 10.10.40.0/24 ip daddr 172.29.250.0/24 counter drop comment "inv-a-oob-drop"
-        ip saddr 10.10.40.0/24 counter accept comment "inv-a-wan"
+        # SMB solo hacia FILE01 (10.10.30.40); Samba despues restringe por grupos
+        ip saddr { 10.10.10.0/24, 10.10.20.0/24, 10.10.50.0/24 } ip daddr 10.10.30.40 tcp dport 445 counter accept comment "corp-smb"
 
-        # FW05: DMZ/servidores solo a puertos expuestos; gestion solo origen autorizado
-        ip daddr 10.10.99.0/24 ip saddr 10.10.10.10/32 counter accept comment "mgmt-solo-admin"
+        # Router-on-a-stick a DB01: 5432 solo desde WEB01 (.30.20)
+        ip saddr { 10.10.0.0/16 } ip daddr 10.10.30.30 tcp dport 5432 counter drop comment "db-5432-otros-drop"
+        # (No está same-subnet, sale vía firewall: .30.20 también cae por esta tabla,
+        # el acceso desde web se habilita con regla explícita siguiente.)
+        ip saddr 10.10.30.20/32 ip daddr 10.10.30.30 tcp dport 5432 counter accept comment "db-5432-desde-web"
+
+        # Invitados 40: NADA interno; solo Internet via NAT (WAN se define al levantar uplink)
+        ip saddr 10.10.40.0/24 ip daddr { 10.10.0.0/16, 10.10.99.0/24, 10.10.60.0/24 } counter drop comment "guest-block-interno"
+        ip saddr 10.10.40.0/24 counter accept comment "guest-salida-wan"
+
+        # Gestión (VLAN99): solo desde CA-TI01 (10.10.99.50) o perfiles de TI por VPN
+        ip daddr 10.10.99.0/24 ip saddr 10.10.99.50/32 counter accept comment "mgmt-ti01"
+        ip daddr 10.10.99.0/24 ip saddr 10.10.60.0/24 counter accept comment "mgmt-vpn-ti"
         ip daddr 10.10.99.0/24 counter drop comment "mgmt-otros-drop"
 
-        # FW06: cliente VPN (10.250.0.0/24) solo DMZ/servicios permitidos, nunca gestión
-        ip saddr 10.250.0.0/24 ip daddr 10.10.30.0/24 tcp dport {443, 445} counter accept comment "vpn-srv"
-        ip saddr 10.250.0.0/24 ip daddr 10.10.99.0/24 counter drop comment "vpn-mgmt-drop"
-        ip saddr 10.250.0.0/24 counter drop comment "vpn-otros-drop"
+        # OpenFlow OVS->controller (6653) solo dentro de gestión
+        ip saddr { 10.10.99.21, 10.10.99.22 } ip daddr 10.10.99.10 tcp dport 6653 counter accept comment "of-6653"
+        ip daddr 10.10.99.10 tcp dport 6653 counter drop comment "of-6653-drop"
 
-        counter drop comment "forward-drop-default"
+        # VPN (10.10.60.0/24): solo DMZ/servicios, sin gestión
+        ip saddr 10.10.60.0/24 ip daddr 10.10.30.20 tcp dport 443 counter accept comment "vpn-web"
+        ip saddr 10.10.60.0/24 ip daddr 10.10.30.40 tcp dport 445 counter accept comment "vpn-smb"
+        ip saddr 10.10.60.0/24 counter drop comment "vpn-otros-drop"
+
+        # Denegación por defecto entre VLAN usuarios (matriz spec)
+        counter drop comment "forward-default-drop"
     }
 }
 
 table ip nat {
     chain postrouting {
         type nat hook postrouting priority 100;
-        # NAT hacia WAN: definido cuando el enlace WAN real existe en el host
-        # (ej: masquerade si el bridge wan tiene salida). Se completa con medida.
+        # NAT a WAN: se completa cuando el uplink (Docker bridge WAN) exista
+        # y se haya verificado la ruta real del host.
     }
 }

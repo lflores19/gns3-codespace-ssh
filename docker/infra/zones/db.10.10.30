@@ -1,0 +1,7 @@
+$TTL 3600
+@   IN  SOA ns.andina.test. admin.andina.test. (2026092601 3600 900 604800 300)
+    IN  NS  ns.andina.test.
+20  IN PTR web.andina.test.
+21  IN PTR app.andina.test.
+30  IN PTR db.andina.test.
+40  IN PTR archivos.andina.test.

@@ -1,29 +1,31 @@
 name: utp-lab-sdn
 
-# Etapa 4: VLANs 10/20/30/40/99 etiquetadas en trunk SW1↔SW2 sobre el backbone
-# (tráfico tagged entre ambos switches) y clientes por VLAN en cada switch.
+# Etapa 4 (spec Comercial Andina): VLANs 10/20/30/40/50 etiquetadas en trunk SW1↔SW2;
+# la gestión (VLAN99) es segmento independiente (sin trunk), según spec §5.1
 
 networks:
   oob:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.29.250.0/24
-          gateway: 172.29.250.1
+        - subnet: 10.10.99.0/24
+          gateway: 10.10.99.1
   backbone:        # enlace entre switches — transporta tramas 802.1Q
     driver: bridge
     driver_opts:
       com.docker.network.bridge.name: lab-backbone
   vlan10_sw1: { driver: bridge, driver_opts: { com.docker.network.bridge.name: vlan10sw1 } }
-  vlan99_sw1: { driver: bridge, driver_opts: { com.docker.network.bridge.name: vlan99sw1 } }
-  vlan10_sw2: { driver: bridge, driver_opts: { com.docker.network.bridge.name: vlan10sw2 } }
+  vlan40_sw1: { driver: bridge, driver_opts: { com.docker.network.bridge.name: vlan40sw1 } }
+  vlan50_sw2: { driver: bridge, driver_opts: { com.docker.network.bridge.name: vlan50sw2 } }
+  vlan20_sw1: { driver: bridge, driver_opts: { com.docker.network.bridge.name: vlan20sw1 } }
+  vlan40_sw2: { driver: bridge, driver_opts: { com.docker.network.bridge.name: vlan40sw2 } }
 
 services:
   controller:
     build: ../../controller
     container_name: lab-ctrl1
     networks:
-      oob: { ipv4_address: 172.29.250.10 }
+      oob: { ipv4_address: 10.10.99.10 }
     healthcheck:
       test: ["CMD-SHELL", "nc -z 127.0.0.1 6653 || exit 1"]
       interval: 10s
@@ -37,15 +39,15 @@ services:
     privileged: true
     environment:
       OVS_BRIDGE: br0
-      OVS_CTRL_IP: 172.29.250.10
+      OVS_CTRL_IP: 10.10.99.10
       OVS_CTRL_PORT: 6653
-      # eth0=oob  eth1=backbone(trunk)  eth2=acc VLAN10  eth3=acc VLAN99
-      OVS_PORTS: "eth1=trunk:10,20,30,40,99 eth2=access:10 eth3=access:99"
+      # eth0=oob  eth1=backbone(trunk)  eth2=acc VLAN10  eth3=acc VLAN20
+      OVS_PORTS: "eth1=trunk:10,20,30,40,50 eth2=access:10 eth3=access:20"
     networks:
-      oob: { ipv4_address: 172.29.250.11 }   # eth0
+      oob: { ipv4_address: 10.10.99.21 }   # eth0
       backbone: {}                            # eth1
       vlan10_sw1: {}                          # eth2
-      vlan99_sw1: {}                          # eth3
+      vlan20_sw1: {}                          # eth3
     depends_on:
       controller: { condition: service_healthy }
     healthcheck:
@@ -61,13 +63,14 @@ services:
     privileged: true
     environment:
       OVS_BRIDGE: br0
-      OVS_CTRL_IP: 172.29.250.10
+      OVS_CTRL_IP: 10.10.99.10
       OVS_CTRL_PORT: 6653
-      OVS_PORTS: "eth1=trunk:10,20,30,40,99 eth2=access:10"
+      OVS_PORTS: "eth1=trunk:10,20,30,40,50 eth2=access:40 eth3=access:50"
     networks:
-      oob: { ipv4_address: 172.29.250.12 }   # eth0
+      oob: { ipv4_address: 10.10.99.22 }   # eth0
       backbone: {}                            # eth1
-      vlan10_sw2: {}                          # eth2
+      vlan40_sw2: {}                          # eth2
+      vlan50_sw2: {}                          # eth3
     depends_on:
       controller: { condition: service_healthy }
     healthcheck:
@@ -84,9 +87,9 @@ services:
     cap_add: [ NET_ADMIN ]
     environment:
       FW_UPLINK: eth1
-      FW_VLANS: "10:10.10.10.1/24 20:10.10.20.1/24 99:10.10.99.1/24"
+      FW_VLANS: "10:10.10.10.1/24 20:10.10.20.1/24 40:10.10.40.1/24 50:10.10.50.1/24"
     networks:
-      oob: { ipv4_address: 172.29.250.254 }   # gestión
+      oob: { ipv4_address: 10.10.99.1 }   # gestión
       backbone: {}                            # eth1: trunk hacia SW1
     restart: unless-stopped
 
@@ -100,20 +103,29 @@ services:
     cap_add: [ NET_ADMIN ]
     depends_on: [ fw ]
 
-  pc10b:
+  pc20:
     image: alpine:3.20
-    container_name: lab-pc10b
-    command: sh -c 'ip route replace default via 10.10.10.1; sleep 3600'
+    container_name: lab-pc20
+    command: sh -c 'ip route replace default via 10.10.20.1; sleep 3600'
     networks:
-      vlan10_sw2: { ipv4_address: 10.10.10.102 }
+      vlan20_sw1: { ipv4_address: 10.10.20.102 }
     cap_add: [ NET_ADMIN ]
     depends_on: [ fw ]
 
-  pc99:
+  pc40:
     image: alpine:3.20
-    container_name: lab-pc99
-    command: sh -c 'ip route replace default via 10.10.99.1; sleep 3600'
+    container_name: lab-pc40
+    command: sh -c 'ip route replace default via 10.10.40.1; sleep 3600'
     networks:
-      vlan99_sw1: { ipv4_address: 10.10.99.20 }
+      vlan40_sw2: { ipv4_address: 10.10.40.101 }
+    cap_add: [ NET_ADMIN ]
+    depends_on: [ fw ]
+
+  pc50:
+    image: alpine:3.20
+    container_name: lab-pc50
+    command: sh -c 'ip route replace default via 10.10.50.1; sleep 3600'
+    networks:
+      vlan50_sw2: { ipv4_address: 10.10.50.101 }
     cap_add: [ NET_ADMIN ]
     depends_on: [ fw ]

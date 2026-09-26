@@ -1,9 +1,0 @@
-$TTL 3600
-@   IN  SOA ns.empresa.test. admin.empresa.test. (2026092601 3600 900 604800 300)
-    IN  NS  ns.empresa.test.
-ns     IN  A   10.10.30.11
-web    IN  A   10.10.30.20
-app    IN  A   10.10.30.21
-db     IN  A   10.10.30.30
-archivos IN A 10.10.30.40
-inventario IN CNAME web
