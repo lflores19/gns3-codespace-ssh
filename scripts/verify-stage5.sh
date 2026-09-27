@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# verify-stage5.sh — gateways router-on-a-stick y NAT base
+# verify-stage5.sh — gateways router-on-a-stick (matriz restrictiva ya instalada)
 set -Eeuo pipefail
 
 P(){ echo "PASS $1"; }
@@ -11,12 +11,16 @@ for ip in 10.10.10.1 10.10.20.1 10.10.30.1 10.10.40.1 10.10.50.1; do
 done
 
 echo
-echo "== pc10a -> 10.10.10.1 =="
+echo "== pc10a -> 10.10.10.1 (mismo VLAN, ICMP) =="
 docker exec lab-pc10a ping -c2 -W2 10.10.10.1 >/dev/null && P pc10a-gw || F pc10a-gw
 
-echo "== pc50 -> 10.10.50.1 =="
+echo "== pc50 -> 10.10.50.1 (mismo VLAN, ICMP) =="
 docker exec lab-pc50 ping -c2 -W2 10.10.50.1 >/dev/null && P pc50-gw || F pc50-gw
 
 echo
-echo "== etapa 5: inter-VLAN permitido (antes del SEC01) =="
-docker exec lab-pc10a ping -c2 -W2 10.10.50.101 >/dev/null && P intervlan-ok || F intervlan-ok
+echo "== note SEC01: ping inter-VLAN debe FALLAR (todo L3 a otro VLAN requiere servicio explícito) =="
+if docker exec lab-pc10a ping -c2 -W2 10.10.50.101 >/dev/null 2>&1; then
+  echo "B: FAIL — inter-VLAN abierto, la matriz no está aplicándose"; exit 1
+else
+  P intervlan-bloqueado
+fi

@@ -39,6 +39,14 @@ for item in $VLAN_GWS; do
   echo "[*] gateway $addr en $sub"
 done
 
+# DHCP relay: VLAN10/20/40/50 -> 10.10.30.10 (Kea en INFRA01)
+if command -v dhcrelay >/dev/null 2>&1; then
+  dhcrelay -4 -i trunk0.10 -i trunk0.20 -i trunk0.40 -i trunk0.50 10.10.30.10 &
+  echo "[*] dhcrelay activo"
+else
+  echo "[!] dhcrelay no disponible: P01 DHCP no pasara; instala paquete dhcp en el Dockerfile"
+fi
+
 [ -f "$NFT_FILE" ] && nft -f "$NFT_FILE" && echo "[*] nftables cargado ($NFT_FILE)"
 nft -s list ruleset | head -30
 echo "[*] firewall listo"

@@ -1,6 +1,6 @@
 FROM alpine:3.20
 
-RUN apk add --no-cache nftables iproute2 iputils openvpn bash gettext \
+RUN apk add --no-cache nftables iproute2 iputils openvpn bash gettext dhcp \
  && mkdir -p /etc/firewall
 
 COPY entrypoint-fw.sh /entrypoint-fw.sh
