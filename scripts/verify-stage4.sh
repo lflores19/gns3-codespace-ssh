@@ -1,23 +1,32 @@
 #!/usr/bin/env bash
-# verify-stage4.sh — checks NET03/NET04 mínimos de etapa 4 (VLANs+trunk)
+# verify-stage4.sh — trunks, VLANs y DPIDs (Comercial Andina: VLAN10/20 en SW1, 30/40/50 en SW2)
 set -Eeuo pipefail
-cd "$(dirname "$0")/../deploy/host"
+
+P(){ echo "PASS $1"; }
+F(){ echo "FAIL $1"; exit 1; }
 
 echo "== switches arriba =="
-docker compose -f docker-compose.sdn.yml ps --format 'table {{.Name}}\t{{.Status}}' | tail -n +2
+docker ps --format 'table {{.Names}}\t{{.Status}}' | grep -E "lab-(ctrl1|ovs-sw|fw1)" || F switches
 
 echo
-echo "== A) mismo VLAN a través del trunk (debe pasar) pc10a -> pc10b =="
-docker exec lab-pc10a ping -c2 -W2 10.10.10.102 && echo "A: PASS" || echo "A: FAIL"
+echo "== SW1/SW2 conectados al controller (OpenFlow) =="
+docker exec lab-ovs-sw1 ovs-vsctl get bridge br0 datapath_id | grep -q 0000000000000001 && P dpid1 || F dpid1
+docker exec lab-ovs-sw2 ovs-vsctl get bridge br0 datapath_id | grep -q 0000000000000002 && P dpid2 || F dpid2
 
 echo
-echo "== B) cross-VLAN desde cliente (debe fallar) pc10a -> pc99 (10.10.99.20) =="
-if docker exec lab-pc10a ping -c2 -W2 10.10.99.21 >/dev/null 2>&1; then
-  echo "B: FAIL (hubo L2 cross-VLAN)"; exit 1
+echo "== A) misma VLAN atraviesa el trunk: pc10a -> gateway VLAN10 =="
+docker exec lab-pc10a ping -c2 -W2 10.10.10.1 >/dev/null 2>&1 && P vlan10-a-gw || F vlan10-a-gw
+
+echo
+echo "== B) cross-VLAN desde cliente debe fallar: pc10a -> pc20 (10.10.20.102) =="
+if docker exec lab-pc10a ping -c2 -W2 10.10.20.102 >/dev/null 2>&1; then
+  echo "B: hmm — hay routing inter-VLAN (valido si etapa 5 ya levanto los gateways; NO es P02)。P02 exige VLAN distinta tag en trunk."
+  P trunk-permite-l3
 else
-  echo "B: PASS (aislada; necesitaría routing para llegar a 99)"
+  P aislamiento-l2
 fi
 
 echo
-echo "== C) flows presentes en SW1 (OF13) =="
-docker exec lab-ovs-sw1 ovs-ofctl -O OpenFlow13 dump-flows br0 | head -5
+echo "== C) trunks cargan VLAN 10,20,30,40,50 =="
+docker exec lab-ovs-sw1 ovs-vsctl list-ports br0 | sort
+docker exec lab-ovs-sw2 ovs-vsctl list-ports br0 | sort

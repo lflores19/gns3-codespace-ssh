@@ -4,7 +4,7 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/../deploy/host"
 
 echo "== DNS A/PTR =="
-docker exec lab-dns nslookup web.empresa.test 127.0.0.1 || echo "pendiente/ajustar"
+docker exec lab-infra01 nslookup web.empresa.test 127.0.0.1 || echo "pendiente/ajustar"
 
 echo "== DB alta+lectura persistente =="
 docker exec -e PGPASSWORD="${DB_PASS:?pasa DB_PASS}" lab-psql-nota 2>/dev/null || true

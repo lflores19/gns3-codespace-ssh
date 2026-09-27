@@ -1,0 +1,185 @@
+name: utp-lab
+
+# Despliegue CANONICO del plano Docker local (Comercial Andina).
+# Un solo archivo para evitar la ambiguedad de versiones anteriores (merge sdn+services).
+# Reglas:
+# - Las redes tienen subnet explicita; los entrypoints descubren la interfaz
+#   MATCHEANDO EL SUBNET (no eth0/eth1/eth2: el orden no esta garantizado).
+# - OOB = 10.10.99.0/24. Trunks SW1<->SW2 por backbone tagged. VLAN99 nunca va en trunk.
+# - DPID 1 = SW1, DPID 2 = SW2. OpenFlow 1.3, fail-mode secure.
+
+networks:
+  oob:
+    driver: bridge
+    ipam: { config: [ { subnet: 10.10.99.0/24, gateway: 10.10.99.1 } ] }
+  backbone:                       # enlace SW1<->SW2 (transporta tags 802.1Q)
+    driver: bridge
+    internal: true
+    ipam: { config: [ { subnet: 10.255.0.0/30 } ] }
+  vlan10_sw1:
+    driver: bridge
+    ipam: { config: [ { subnet: 10.10.10.0/24 } ] }
+  vlan20_sw1:
+    driver: bridge
+    ipam: { config: [ { subnet: 10.10.20.0/24 } ] }
+  vlan30_sw2:                     # servidores del spec (detras de SW2)
+    driver: bridge
+    ipam: { config: [ { subnet: 10.10.30.0/24 } ] }
+  vlan40_sw2:
+    driver: bridge
+    ipam: { config: [ { subnet: 10.10.40.0/24 } ] }
+  vlan50_sw2:
+    driver: bridge
+    ipam: { config: [ { subnet: 10.10.50.0/24 } ] }
+  wan:                            # segmento WAN de prueba (documentado, no Internet real)
+    driver: bridge
+    ipam: { config: [ { subnet: 192.0.2.0/24 } ] }
+
+services:
+  controller:
+    build: ../../controller
+    container_name: lab-ctrl1
+    networks:
+      oob: { ipv4_address: 10.10.99.10 }
+    ports:
+      - "127.0.0.1:6653:6653"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 6653 || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  sw1:
+    build: ../../docker/ovs
+    container_name: lab-ovs-sw1
+    privileged: true
+    environment:
+      OVS_DPID: "0000000000000001"
+      OVS_CTRL_IP: 10.10.99.10
+      # mapa red->modo (resuelto por subnet, no ethn)
+      OVS_PORTS: "10.255.0.0/30=trunk:10,20,30,40,50 10.10.10.0/24=access:10 10.10.20.0/24=access:20"
+    networks: [ oob, backbone, vlan10_sw1, vlan20_sw1 ]
+    depends_on:
+      controller: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "ovs-vsctl --timeout=3 show"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+    restart: unless-stopped
+
+  sw2:
+    build: ../../docker/ovs
+    container_name: lab-ovs-sw2
+    privileged: true
+    environment:
+      OVS_DPID: "0000000000000002"
+      OVS_CTRL_IP: 10.10.99.10
+      OVS_PORTS: "10.255.0.0/30=trunk:10,20,30,40,50 10.10.30.0/24=access:30 10.10.40.0/24=access:40 10.10.50.0/24=access:50"
+    networks: [ oob, backbone, vlan30_sw2, vlan40_sw2, vlan50_sw2 ]
+    depends_on:
+      controller: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "ovs-vsctl --timeout=3 show"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+    restart: unless-stopped
+
+  fw:
+    build: ../../docker/vpn
+    container_name: lab-fw1
+    cap_add: [ NET_ADMIN ]
+    environment:
+      # UPLIKN identificado por subnet; WAN identificado por subnet tambien
+      FW_TRUNK_NET: "10.255.0.0/30"
+      FW_WAN_NET: "192.0.2.0/24"
+      FW_VLANS: "10:10.10.10.1/24 20:10.10.20.1/24 40:10.10.40.1/24 50:10.10.50.1/24 30:10.10.30.1/24"
+    networks: [ oob, backbone, vlan30_sw2, wan ]
+    restart: unless-stopped
+
+  # clientes de prueba — un rol por VLAN, siguiendo el spec
+  pc10a: { image: alpine:3.20, container_name: lab-pc10a, command: sh -c 'ip route replace default via 10.10.10.1; sleep 3600', networks: { vlan10_sw1: { ipv4_address: 10.10.10.101 } }, cap_add: [ NET_ADMIN ], depends_on: [ fw, sw1 ] }
+  pc20:  { image: alpine:3.20, container_name: lab-pc20,  command: sh -c 'ip route replace default via 10.10.20.1; sleep 3600', networks: { vlan20_sw1: { ipv4_address: 10.10.20.102 } }, cap_add: [ NET_ADMIN ], depends_on: [ fw, sw1 ] }
+  pc40:  { image: alpine:3.20, container_name: lab-pc40,  command: sh -c 'ip route replace default via 10.10.40.1; sleep 3600', networks: { vlan40_sw2: { ipv4_address: 10.10.40.101 } }, cap_add: [ NET_ADMIN ], depends_on: [ fw, sw2 ] }
+  pc50:  { image: alpine:3.20, container_name: lab-pc50,  command: sh -c 'ip route replace default via 10.10.50.1; sleep 3600', networks: { vlan50_sw2: { ipv4_address: 10.10.50.101 } }, cap_add: [ NET_ADMIN ], depends_on: [ fw, sw2 ] }
+
+  # -- VLAN30: servidores del spec ------------------------------------------
+  infra:
+    build: ../../docker/infra
+    container_name: lab-infra01
+    networks: { vlan30_sw2: { ipv4_address: 10.10.30.10 } }
+    cap_add: [ NET_BIND_SERVICE, NET_RAW, NET_ADMIN ]
+    depends_on: [ fw, sw2 ]
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: lab-db01
+    environment:
+      POSTGRES_DB: inventario
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASS:?DB_PASS requerida via entorno}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ../../docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks: { vlan30_sw2: { ipv4_address: 10.10.30.30 } }
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d inventario"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+    depends_on: [ sw2 ]
+
+  app:
+    build: ../../docker/app
+    container_name: lab-web01-app
+    environment:
+      DB_HOST: 10.10.30.30
+      DB_NAME: inventario
+      DB_USER: inventory_app
+      DB_PASS: ${DB_PASS:?}
+    networks: { vlan30_sw2: { ipv4_address: 10.10.30.21 } }
+    depends_on: { db: { condition: service_healthy } }
+
+  web:
+    build: ../../docker/web
+    container_name: lab-web01
+    networks: { vlan30_sw2: { ipv4_address: 10.10.30.20 } }
+    depends_on: [ app ]
+
+  samba:
+    build: ../../docker/samba
+    container_name: lab-file01
+    networks: { vlan30_sw2: { ipv4_address: 10.10.30.40 } }
+    cap_add: [ NET_ADMIN ]
+    depends_on: [ sw2 ]
+
+  # -- VLAN99: monitoreo -----------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: lab-mon01-prom
+    volumes:
+      - ../../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../monitoring/alerts.yml:/etc/prometheus/alerts/alerts.yml:ro
+    networks: { oob: { ipv4_address: 10.10.99.30 } }
+    depends_on: [ controller ]
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: lab-mon01-amgr
+    volumes:
+      - ../../monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    networks: { oob: { ipv4_address: 10.10.99.31 } }
+    depends_on: [ controller ]
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: lab-mon01-grafana
+    networks: { oob: { ipv4_address: 10.10.99.32 } }
+    depends_on: [ prometheus ]
+
+volumes:
+  db-data:

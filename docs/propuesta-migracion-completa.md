@@ -61,7 +61,7 @@ bash scripts/bootstrap-images.sh
 # 5) levantar gns3server (Windows GNS3 GUI conectado a el)
 
 # 6) arrancar la capa Docker complementaria (etapas 2‑5 adicionales)
-docker compose -f deploy/host/docker-compose.sdn.yml up -d --build
+docker compose -f deploy/host/docker-compose.lab.yml up -d --build
 ```
 
 ## 4. Cómo se conectan ambos planos

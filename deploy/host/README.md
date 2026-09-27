@@ -12,8 +12,8 @@ Corre **en paralelo** con el lab QEMU/OJS importado del Codespace (Plano A); no 
 ## Levantar plano SDN base (controller + 2×OVS)
 
 ```bash
-docker compose -f deploy/host/docker-compose.sdn.yml up -d --build
-docker compose -f deploy/host/docker-compose.sdn.yml ps
+docker compose -f deploy/host/docker-compose.lab.yml up -d --build
+docker compose -f deploy/host/docker-compose.lab.yml ps
 bash ../scripts/verify-stage4.sh      # checks de trunks y aislamiento
 bash ../scripts/verify-stage5.sh      # gateway multi-VLAN + nftables base
 ```
@@ -31,7 +31,7 @@ Las VLANs `192.168.x.x`, `172.16.0.x`, `10.20.30.x` siguen siendo exclusivas del
 ## Etapas ya versionadas
 
 - `../scripts/build-images.sh` — compila lo que ya da Dockerfile, con tag fijo `1.0.0`.
-- `docker-compose.sdn.yml` — controller + 2×OVS con healthchecks y dependencias de servicio saludable.
+- `docker-compose.lab.yml` — controller + 2×OVS con healthchecks y dependencias de servicio saludable.
 - `../scripts/verify-stage4.sh` / `verify-stage5.sh` — validaciones ejecutables.
 - Protocolos según spec §4: OpenFlow 1.3; fail‑mode `secure`.
 

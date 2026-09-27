@@ -14,12 +14,12 @@ table ip filter {
         ip protocol icmp accept comment "icmp-gestion"
         # OpenVPN aún en standby: habilitamos WireGuard UDP 51820 desde WAN (spec §6).
         # Cuando se use OpenVPN en su lugar, se añade tcp 1194 y se retira esta.
-        iifname "wan" udp dport 51820 counter accept comment "wireguard-wan"
+        iifname "wan0" udp dport 51820 counter accept comment "wireguard-wan"
         # DHCP relay del firewall escucha en las VLAN cliente (UDP 67 desde interno)
-        iifname "eth1.*" udp dport 67 counter accept comment "dhcp-relay"
+        iifname "trunk0.*" udp dport 67 counter accept comment "dhcp-relay"
         # DNS en el propio firewall solo para VLAN40 (spec: guest DNS = 10.10.40.1)
-        iifname "eth1.40" udp dport 53 counter accept comment "dns-guest"
-        iifname "eth1.40" tcp dport 53 counter accept comment "dns-guest-tcp"
+        iifname "trunk0.40" udp dport 53 counter accept comment "dns-guest"
+        iifname "trunk0.40" tcp dport 53 counter accept comment "dns-guest-tcp"
         counter drop comment "input-drop"
     }
 

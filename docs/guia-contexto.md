@@ -20,8 +20,7 @@
 | `feat/docker-host-full` | Trabajo nuevo: plano Docker local en **paralelo** al lab migrado. |
 | `scripts/export-lab.sh` / `import-lab.sh` | Piñón de la migración (bundle portable + qcow2 por fuera de git). |
 | `scripts/preflight-host.sh` | GO/NO-GO del host local — se ejecuta en tu WSL2 Ubuntu. |
-| `deploy/host/docker-compose.sdn.yml` | Capa Docker SDN nueva (Eth0=OOB, Eth1=trunk, subinterfaces en fw). |
-| `deploy/host/docker-compose.services.yml` | VLAN30 del plano Docker: web+app+db+dns+dhcp+samba. |
+| `deploy/host/docker-compose.lab.yml` | **Unico archivo de despliegue canonico**: controlador + 2xOVS + firewall + clientes + VLAN30 + monitoreo. |
 | `docker/ovs|vpn|dhcp|dns|db|samba`, `monitoring/` | Config de los nuevos containers. |
 | `scripts/verify-stage{4,5,6,7,8,10}.sh` | Chequeos ejecutables de cada etapa. |
 
@@ -49,8 +48,7 @@ Siempre comprobar solapamientos antes de aplicar cambios.
 2. Ejecutar `scripts/export-lab.sh` en el Codespace (ya probado) y copiar el bundle + `.gns3_private_backups` a tu PC.
 3. `scripts/import-lab.sh <bundle>` en la PC → máquina levanta `utp-network-lab` con los 15 nodos originales.
 4. `scripts/build-images.sh` → etapa 2 (Docker تعملا).
-5. `docker compose -f deploy/host/docker-compose.sdn.yml up -d --build` → etapa 3-5 SDN (verificar con verify-stage4/5).
-6. `docker compose -f deploy/host/docker-compose.services.yml up -d` → VLAN30 (verify-stage7).
+5. `docker compose -f deploy/host/docker-compose.lab.yml up -d --build` → todo el plano Docker (sdn+servicios+mon). Verificar con verify-stage4/5/6/7.
 7. Matriz SEC01 + OpenVPN → verify-stage6. fmt.
 8. Monitoreo, PERF, SDN02/03 → verify-stage8/10.
 9. Actualizar `docs/matriz-requisitos.csv` solo cuando haya evidencia.
