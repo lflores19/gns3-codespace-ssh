@@ -1,6 +1,6 @@
 FROM alpine:3.20
 
-RUN apk add --no-cache openvswitch bash iproute2 iputils tshark \
+RUN apk add --no-cache openvswitch bash iproute2 iputils tshark python3 \
  && mkdir -p /var/run/openvswitch
 
 COPY entrypoint.sh /entrypoint.sh

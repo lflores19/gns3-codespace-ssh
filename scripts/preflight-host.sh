@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # preflight-host.sh — chequeo GO/NO-GO para el host local destino (WSL2 Ubuntu).
-# Corre dónde se vaya a desplegar el lab. No modifica nada: solo informa.
+# Corre dónde se vaya a desplegar el lab. Diagnóstico de capacidades y entorno.
 set -uo pipefail
 
 PASS=0; FAIL=0; WARN=0

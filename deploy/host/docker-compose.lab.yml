@@ -15,7 +15,7 @@ networks:
   backbone:                       # enlace SW1<->SW2 (transporta tags 802.1Q)
     driver: bridge
     internal: true
-    ipam: { config: [ { subnet: 10.255.0.0/30 } ] }
+    ipam: { config: [ { subnet: 10.255.0.0/28 } ] }
   vlan10_sw1:
     driver: bridge
     ipam: { config: [ { subnet: 10.10.10.0/24 } ] }
@@ -58,7 +58,7 @@ services:
       OVS_DPID: "0000000000000001"
       OVS_CTRL_IP: 10.10.99.10
       # mapa red->modo (resuelto por subnet, no ethn)
-      OVS_PORTS: "10.255.0.0/30=trunk:10,20,30,40,50 10.10.10.0/24=access:10 10.10.20.0/24=access:20"
+      OVS_PORTS: "10.255.0.0/28=trunk:10,20,30,40,50 10.10.10.0/24=access:10 10.10.20.0/24=access:20"
     networks: [ oob, backbone, vlan10_sw1, vlan20_sw1 ]
     depends_on:
       controller: { condition: service_healthy }
@@ -76,7 +76,7 @@ services:
     environment:
       OVS_DPID: "0000000000000002"
       OVS_CTRL_IP: 10.10.99.10
-      OVS_PORTS: "10.255.0.0/30=trunk:10,20,30,40,50 10.10.30.0/24=access:30 10.10.40.0/24=access:40 10.10.50.0/24=access:50"
+      OVS_PORTS: "10.255.0.0/28=trunk:10,20,30,40,50 10.10.30.0/24=access:30 10.10.40.0/24=access:40 10.10.50.0/24=access:50"
     networks: [ oob, backbone, vlan30_sw2, vlan40_sw2, vlan50_sw2 ]
     depends_on:
       controller: { condition: service_healthy }
@@ -93,7 +93,7 @@ services:
     cap_add: [ NET_ADMIN ]
     environment:
       # UPLIKN identificado por subnet; WAN identificado por subnet tambien
-      FW_TRUNK_NET: "10.255.0.0/30"
+      FW_TRUNK_NET: "10.255.0.0/28"
       FW_WAN_NET: "192.0.2.0/24"
       FW_VLANS: "10:10.10.10.1/24 20:10.10.20.1/24 40:10.10.40.1/24 50:10.10.50.1/24 30:10.10.30.1/24"
     networks: [ oob, backbone, vlan30_sw2, wan ]

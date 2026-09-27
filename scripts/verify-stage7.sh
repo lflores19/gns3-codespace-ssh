@@ -18,8 +18,8 @@ docker exec lab-web01-app sh -c "python -c 'import requests' 2>/dev/null || pip 
 docker exec lab-web01-app sh -c "PIP_TARGET=/tmp/pip pip install -q psycopg2-binary && python - <<'PY'
 import psycopg2, os
 c = psycopg2.connect(host='10.10.30.30', dbname='inventario', user='inventory_app', password=os.environ['DB_PASS'])
-cur=c.cursor(); cur.execute('INSERT INTO items(nombre,stock) VALUES (%s,%s) RETURNING id',('prueba',1)); new=cur.fetchone()[0]
-cur.execute('SELECT stock FROM items WHERE id=%s',(new,)); print('select=',cur.fetchone())
+cur=c.cursor(); cur.execute('INSERT INTO items(name) VALUES (%s) RETURNING id',('prueba',)); new=cur.fetchone()[0]
+cur.execute('SELECT name FROM items WHERE id=%s',(new,)); print('select=',cur.fetchone())
 c.commit(); c.close()
 PY" && P app-db-persiste || F app-db-persiste
 

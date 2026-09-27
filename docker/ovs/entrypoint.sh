@@ -24,7 +24,21 @@ ovs-vsctl set-fail-mode "$BRIDGE" secure
 ovs-vsctl set-controller "$BRIDGE" "tcp:${CTRL_IP}:${CTRL_PORT}"
 
 find_if_by_net() {  # $1=CIDR
-  ip -o -4 addr show | awk -v n="$1" '$0 ~ (" " substr(n,1,index(n,"/")-1) ) {{split($4,a,"/"); print $2}}' | head -1
+  local target_net="$1"
+  python3 -c "
+import sys, ipaddress, subprocess
+target = ipaddress.ip_network('$target_net', strict=False)
+out = subprocess.check_output(['ip', '-o', '-4', 'addr', 'show'], text=True)
+for line in out.splitlines():
+    parts = line.split()
+    if len(parts) >= 4:
+        ifname = parts[1]
+        addr = parts[3]
+        if ipaddress.ip_interface(addr).ip in target:
+            print(ifname)
+            sys.exit(0)
+sys.exit(1)
+" 2>/dev/null || true
 }
 
 for spec in $PORTS; do

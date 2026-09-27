@@ -11,7 +11,21 @@ VLAN_GWS="${FW_VLANS:-}"
 NFT_FILE="${NFT_FILE:-/etc/firewall/fw.nft}"
 
 find_if_by_net() {
-  ip -o -4 addr show | awk -v n="$1" 'index($4, substr(n,1,index(n,"/")-1))>0 {print $2}' | head -1
+  local target_net="$1"
+  python3 -c "
+import sys, ipaddress, subprocess
+target = ipaddress.ip_network('$target_net', strict=False)
+out = subprocess.check_output(['ip', '-o', '-4', 'addr', 'show'], text=True)
+for line in out.splitlines():
+    parts = line.split()
+    if len(parts) >= 4:
+        ifname = parts[1]
+        addr = parts[3]
+        if ipaddress.ip_interface(addr).ip in target:
+            print(ifname)
+            sys.exit(0)
+sys.exit(1)
+" 2>/dev/null || true
 }
 
 UPLINK=""; WANIF=""

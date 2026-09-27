@@ -24,6 +24,16 @@ def create_app(database_url=None, connect=None):
     def get_connection():
         dsn = app.config["DATABASE_URL"]
         if not dsn:
+            host = os.environ.get("DB_HOST", "127.0.0.1")
+            name = os.environ.get("DB_NAME", "inventario")
+            user = os.environ.get("DB_USER", "inventory_app")
+            pwd = os.environ.get("DB_PASS", "")
+            port = os.environ.get("DB_PORT", "5432")
+            if pwd:
+                dsn = f"postgresql://{user}:{pwd}@{host}:{port}/{name}"
+            else:
+                dsn = f"postgresql://{user}@{host}:{port}/{name}"
+        if not dsn:
             raise ConfigurationError("DATABASE_URL is required")
         if connect:
             return connect(dsn)
@@ -117,4 +127,4 @@ def create_app(database_url=None, connect=None):
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000)
+    app.run(host="0.0.0.0", port=5000)

@@ -37,11 +37,9 @@ table ip filter {
         # SMB solo hacia FILE01 (10.10.30.40); Samba despues restringe por grupos
         ip saddr { 10.10.10.0/24, 10.10.20.0/24, 10.10.50.0/24 } ip daddr 10.10.30.40 tcp dport 445 counter accept comment "corp-smb"
 
-        # Router-on-a-stick a DB01: 5432 solo desde WEB01 (.30.20)
+        # Router-on-a-stick a DB01: 5432 solo desde WEB/APP autorizados (.30.20 y .30.21)
+        ip saddr { 10.10.30.20/32, 10.10.30.21/32 } ip daddr 10.10.30.30 tcp dport 5432 counter accept comment "db-5432-desde-web-app"
         ip saddr { 10.10.0.0/16 } ip daddr 10.10.30.30 tcp dport 5432 counter drop comment "db-5432-otros-drop"
-        # (No está same-subnet, sale vía firewall: .30.20 también cae por esta tabla,
-        # el acceso desde web se habilita con regla explícita siguiente.)
-        ip saddr 10.10.30.20/32 ip daddr 10.10.30.30 tcp dport 5432 counter accept comment "db-5432-desde-web"
 
         # Invitados 40: NADA interno; solo Internet via NAT (WAN se define al levantar uplink)
         ip saddr 10.10.40.0/24 ip daddr { 10.10.0.0/16, 10.10.99.0/24, 10.10.60.0/24 } counter drop comment "guest-block-interno"
